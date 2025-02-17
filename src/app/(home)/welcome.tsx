@@ -26,7 +26,7 @@ export function Welcome({ portalUrl }: { portalUrl?: string }) {
           <Icon icon="Code" />
         </div>
         <div className="mb-2">
-          <Heading variant="3xl">Welcome to the custom app base</Heading>
+          <Heading variant="3xl">Welcome to Dillon's custom app base</Heading>
         </div>
         <Body variant="lg" tag="p">
           This is a demo of a custom app that integrates with Copilot. Our goal
