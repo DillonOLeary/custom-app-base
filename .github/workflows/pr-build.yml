@@ -18,10 +18,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'yarn'
+      
+      - name: Enable Corepack
+        run: corepack enable
+      
+      - name: Setup Yarn
+        run: corepack prepare yarn@4.1.0 --activate
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --mode=skip-build
 
       - name: Build
         run: yarn build
