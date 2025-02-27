@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { resetTestDatabase, getStandardTestProjects } from './test-setup';
 
 /**
  * These tests verify the complete user flow from viewing projects,
@@ -6,6 +7,10 @@ import { test, expect, Page } from '@playwright/test';
  * and running analysis.
  */
 test.describe('Complete user flow tests', () => {
+  // Reset the database state before running tests
+  test.beforeAll(async () => {
+    await resetTestDatabase();
+  });
   // Common setup function to navigate to the dashboard and verify it loads
   async function navigateToDashboard(page: Page) {
     await page.goto('/');
@@ -107,8 +112,11 @@ test.describe('Complete user flow tests', () => {
   test("User can view a project's details", async ({ page }) => {
     await navigateToDashboard(page);
 
-    // Click on the first project card
-    await page.getByTestId('project-card-1').click();
+    // Use consistent project IDs from test-setup
+    const projects = getStandardTestProjects();
+
+    // Click on the completed project card
+    await page.getByTestId(`project-card-${projects.completed.id}`).click();
 
     // Wait for navigation
     await page.waitForTimeout(1000);
@@ -132,8 +140,11 @@ test.describe('Complete user flow tests', () => {
   test('User can upload files to a project and view them in the file browser', async ({
     page,
   }) => {
+    // Use consistent test projects
+    const projects = getStandardTestProjects();
+
     // Navigate to a specific project detail page
-    await page.goto('/projects/1');
+    await page.goto(`/projects/${projects.completed.id}`);
 
     // Wait for the project details to load
     await expect(page.getByText('UPLOAD PROJECT FILES')).toBeVisible();
@@ -174,8 +185,11 @@ test.describe('Complete user flow tests', () => {
   test('User can run analysis on a project with uploaded files', async ({
     page,
   }) => {
+    // Use consistent test projects
+    const projects = getStandardTestProjects();
+
     // Navigate to a project with files
-    await page.goto('/projects/1');
+    await page.goto(`/projects/${projects.completed.id}`);
 
     // Wait for the project details to load
     await expect(page.getByText('UPLOAD PROJECT FILES')).toBeVisible();
@@ -256,8 +270,9 @@ test.describe('Complete user flow tests', () => {
     console.log(`Created project with name: ${projectName}`);
 
     // Instead of trying to find the specific card which may not appear in mock data,
-    // we'll test the rest of the flow by going directly to an existing project
-    await page.goto('/projects/1');
+    // we'll test the rest of the flow by going directly to an existing project with a fixed ID
+    const projects = getStandardTestProjects();
+    await page.goto(`/projects/${projects.completed.id}`);
 
     // 3. Verify project page and upload a file
     await expect(page.getByText('UPLOAD PROJECT FILES')).toBeVisible();
