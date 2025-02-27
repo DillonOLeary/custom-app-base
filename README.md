@@ -68,10 +68,16 @@ yarn test:e2e
 Mutation testing helps verify the quality of your test suite by making small changes to your code and ensuring tests catch these changes.
 
 ```
-yarn test:mutation        # Run mutation tests on all configured files
-yarn test:mutation:utils  # Run mutation tests only on utility functions
+yarn test:mutation          # Run mutation tests on all configured files
+yarn test:mutation:utils    # Run mutation tests only on utility functions
 yarn test:mutation:services # Run mutation tests only on services
+yarn test:mutation:components # Run mutation tests on all components
+yarn test:mutation:common   # Run mutation tests only on common components
+yarn test:mutation:dashboard # Run mutation tests only on dashboard components
+yarn test:mutation:detail   # Run mutation tests only on project detail components
 ```
+
+Mutation testing results are available in HTML format at `reports/mutation/mutation.html` after running the tests.
 
 ### Content Security Policy
 

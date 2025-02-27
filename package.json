@@ -20,7 +20,11 @@
     "test:e2e:ui": "playwright test --ui",
     "test:mutation": "stryker run",
     "test:mutation:utils": "stryker run --mutate 'src/utils/**/*.ts'",
-    "test:mutation:services": "stryker run --mutate 'src/services/**/*.ts'"
+    "test:mutation:services": "stryker run --mutate 'src/services/**/*.ts'",
+    "test:mutation:components": "stryker run --mutate 'src/components/**/*.tsx'",
+    "test:mutation:common": "stryker run --mutate 'src/components/common/**/*.tsx'",
+    "test:mutation:dashboard": "stryker run --mutate 'src/components/project-dashboard/**/*.tsx'",
+    "test:mutation:detail": "stryker run --mutate 'src/components/project-detail/**/*.tsx'"
   },
   "dependencies": {
     "caniuse-lite": "^1.0.30001701",
