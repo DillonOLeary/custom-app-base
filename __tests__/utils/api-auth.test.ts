@@ -1,12 +1,11 @@
-// Mocking next/server functionality
-import { NextResponse } from 'next/server';
+// Import type NextRequest from next/server so TypeScript knows about it
+import { NextRequest, NextResponse } from 'next/server';
+import { validateToken } from '@/utils/api-auth';
+import { copilotApi } from 'copilot-node-sdk';
 
-// Mock NextRequest since it doesn't work well in Jest environment
+// Mock next/server
 jest.mock('next/server', () => {
-  const originalModule = jest.requireActual('next/server');
   return {
-    ...originalModule,
-    NextRequest: jest.fn(),
     NextResponse: {
       json: jest.fn((body, options) => ({
         status: options?.status || 200,
@@ -15,8 +14,6 @@ jest.mock('next/server', () => {
     },
   };
 });
-import { validateToken } from '@/utils/api-auth';
-import { copilotApi } from 'copilot-node-sdk';
 
 // Mock copilotApi
 jest.mock('copilot-node-sdk', () => ({
@@ -25,17 +22,22 @@ jest.mock('copilot-node-sdk', () => ({
   })),
 }));
 
-// Mock NextRequest
-const mockRequest = (token?: string) => {
+// Create mock request factory function
+const createMockRequest = (token?: string) => {
   const url = new URL('https://example.com');
   if (token) {
     url.searchParams.set('token', token);
   }
-  
+
   return {
     url: url.toString(),
-    nextUrl: url,
-  } as unknown as NextRequest;
+    // Provide just enough of the nextUrl interface for our validation function
+    nextUrl: {
+      searchParams: {
+        get: (key: string) => url.searchParams.get(key),
+      },
+    },
+  };
 };
 
 describe('API Authentication', () => {
@@ -52,13 +54,13 @@ describe('API Authentication', () => {
   });
 
   test('validates token successfully', async () => {
-    const request = mockRequest('valid-token');
+    const request = createMockRequest('valid-token');
     const { copilot, response } = await validateToken(request);
 
     // Should return copilot client and no error response
     expect(copilot).toBeTruthy();
     expect(response).toBeNull();
-    
+
     // Should have called copilotApi with token
     expect(copilotApi).toHaveBeenCalledWith({
       apiKey: 'test-api-key',
@@ -67,18 +69,18 @@ describe('API Authentication', () => {
   });
 
   test('returns error response when token is missing', async () => {
-    const request = mockRequest();
+    const request = createMockRequest();
     const { copilot, response } = await validateToken(request);
 
     // Should return no client and an error response in production
     expect(copilot).toBeNull();
-    expect(response).toBeInstanceOf(NextResponse);
+    expect(response).toBeTruthy();
     expect(response?.status).toBe(401);
   });
 
   test('skips validation in local environment', async () => {
     process.env.COPILOT_ENV = 'local';
-    const request = mockRequest(); // No token
+    const request = createMockRequest();
     const { copilot, response } = await validateToken(request);
 
     // Should return copilot client and no error response
@@ -88,7 +90,7 @@ describe('API Authentication', () => {
 
   test('skips validation in development environment', async () => {
     process.env.NODE_ENV = 'development';
-    const request = mockRequest(); // No token
+    const request = createMockRequest();
     const { copilot, response } = await validateToken(request);
 
     // Should return copilot client and no error response
