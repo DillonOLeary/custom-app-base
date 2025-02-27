@@ -13,7 +13,7 @@ export function FileList({ files, isLoading }: FileListProps) {
   // Helper function to get the file icon based on file name
   const getFileIcon = (fileName: string) => {
     const extension = fileName.split('.').pop()?.toLowerCase();
-    
+
     switch (extension) {
       case 'pdf':
         return '📄';
@@ -35,7 +35,7 @@ export function FileList({ files, isLoading }: FileListProps) {
         return '📁';
     }
   };
-  
+
   // Get status colors
   const getStatusColor = (status: FileUpload['status']) => {
     switch (status) {
@@ -55,11 +55,13 @@ export function FileList({ files, isLoading }: FileListProps) {
   if (isLoading) {
     return (
       <div className="mb-8">
-        <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">PROJECT FILES</h2>
+        <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
+          PROJECT FILES
+        </h2>
         <div className="space-y-4">
           {[...Array(3)].map((_, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="bg-white border border-[--color-bg-1] p-4 rounded-lg animate-pulse"
             >
               <div className="h-5 bg-[--color-bg-1] rounded w-1/3 mb-3"></div>
@@ -73,8 +75,10 @@ export function FileList({ files, isLoading }: FileListProps) {
 
   return (
     <div className="mb-8">
-      <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">PROJECT FILES</h2>
-      
+      <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
+        PROJECT FILES
+      </h2>
+
       {files.length === 0 ? (
         <div className="bg-white border border-[--color-bg-1] p-6 rounded-lg text-center">
           <p className="heading-secondary text-2 text-[--color-text-dark]">
@@ -90,29 +94,31 @@ export function FileList({ files, isLoading }: FileListProps) {
               data-testid={`file-item-${file.id}`}
             >
               <div className="text-2xl mr-4">{getFileIcon(file.fileName)}</div>
-              
+
               <div className="flex-1">
                 <div className="flex flex-wrap justify-between">
                   <h3 className="heading-secondary text-2 text-[--color-text-dark] mb-1">
                     {file.fileName}
                   </h3>
-                  <span className={`ceart-score-badge ${getStatusColor(file.status)}`}>
+                  <span
+                    className={`ceart-score-badge ${getStatusColor(file.status)}`}
+                  >
                     {file.status.charAt(0).toUpperCase() + file.status.slice(1)}
                   </span>
                 </div>
-                
+
                 <div className="flex text-[--color-bg-3] text-3">
                   <span>{formatFileSize(file.fileSize)}</span>
                   <span className="mx-2">•</span>
                   <span>{timeAgo(file.uploadDate)}</span>
                 </div>
-                
+
                 {file.status === 'processing' && (
                   <div className="mt-2 w-full bg-[--color-bg-1] rounded-full h-1.5">
                     <div className="bg-[--color-primary] h-1.5 rounded-full animate-pulse w-3/4"></div>
                   </div>
                 )}
-                
+
                 {file.status === 'failed' && file.errorMessage && (
                   <div className="mt-2 text-[--color-secondary] text-3">
                     Error: {file.errorMessage}

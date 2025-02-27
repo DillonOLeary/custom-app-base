@@ -3,7 +3,7 @@ import { getMockProjectDetails } from '@/mocks/projectDetails';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const { id } = params;
 
@@ -11,11 +11,11 @@ export async function GET(
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   const project = getMockProjectDetails(id);
-  
+
   if (!project) {
     return NextResponse.json(
       { error: `Project with ID ${id} not found` },
-      { status: 404 }
+      { status: 404 },
     );
   }
 

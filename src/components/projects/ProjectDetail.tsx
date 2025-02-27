@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { CategoryScore, Project, ScoreCategory } from '@/types/project';
-import { 
-  getProjectDetails, 
-  getProjectFiles, 
+import {
+  getProjectDetails,
+  getProjectFiles,
   uploadFile,
-  runAnalysis 
+  runAnalysis,
 } from '@/services/projectDetailApi';
 import { ProjectHeader } from './ProjectHeader';
 import { FileUpload } from './FileUpload';
@@ -34,7 +34,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
   const fetchProjectDetails = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const projectData = await getProjectDetails(projectId);
       setProject(projectData);
@@ -45,29 +45,31 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
       setIsLoading(false);
     }
   }, [projectId]);
-  
+
   const fetchProjectFiles = useCallback(async () => {
     // Don't set loading if we already have files to prevent flickering
     if (files.length === 0) {
       setIsLoadingFiles(true);
     }
-    
+
     try {
       const filesData = await getProjectFiles(projectId);
-      
+
       // First set the files array to avoid flickering
       setFiles(filesData);
-      
+
       // Process files to get folder structure
       if (project?.analysisResult) {
         // If we have analysis results, include red flags
-        const redFlags = project.analysisResult.categoryScores.flatMap(cat => cat.redFlags);
-        
+        const redFlags = project.analysisResult.categoryScores.flatMap(
+          (cat) => cat.redFlags,
+        );
+
         // Use try/catch to prevent processing errors from crashing the app
         try {
-          const { folders: processedFolders, rootFiles: processedRootFiles } = 
+          const { folders: processedFolders, rootFiles: processedRootFiles } =
             processFilesForProject(filesData, redFlags);
-          
+
           // Set folder data in a single update to prevent re-renders
           setFolders(processedFolders);
           setRootFiles(processedRootFiles);
@@ -80,9 +82,9 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
       } else {
         // Just organize files without red flags
         try {
-          const { folders: processedFolders, rootFiles: processedRootFiles } = 
+          const { folders: processedFolders, rootFiles: processedRootFiles } =
             processFilesForProject(filesData);
-          
+
           setFolders(processedFolders);
           setRootFiles(processedRootFiles);
         } catch (processingErr) {
@@ -103,44 +105,49 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
   useEffect(() => {
     fetchProjectDetails();
   }, [fetchProjectDetails]);
-  
+
   useEffect(() => {
     if (project) {
       fetchProjectFiles();
     }
   }, [project, fetchProjectFiles]);
 
-  const handleUploadComplete = useCallback((file: FileUploadType) => {
-    setFiles((prevFiles) => [file, ...prevFiles]);
-    
-    // Re-process folder structure with the new file
-    const updatedFiles = [file, ...files];
-    
-    if (project?.analysisResult) {
-      // Include red flags if available
-      const redFlags = project.analysisResult.categoryScores.flatMap(cat => cat.redFlags);
-      const { folders: processedFolders, rootFiles: processedRootFiles } = 
-        processFilesForProject(updatedFiles, redFlags);
-      
-      setFolders(processedFolders);
-      setRootFiles(processedRootFiles);
-    } else {
-      // Just organize files
-      const { folders: processedFolders, rootFiles: processedRootFiles } = 
-        processFilesForProject(updatedFiles);
-      
-      setFolders(processedFolders);
-      setRootFiles(processedRootFiles);
-    }
-  }, [files, project?.analysisResult]);
-  
+  const handleUploadComplete = useCallback(
+    (file: FileUploadType) => {
+      setFiles((prevFiles) => [file, ...prevFiles]);
+
+      // Re-process folder structure with the new file
+      const updatedFiles = [file, ...files];
+
+      if (project?.analysisResult) {
+        // Include red flags if available
+        const redFlags = project.analysisResult.categoryScores.flatMap(
+          (cat) => cat.redFlags,
+        );
+        const { folders: processedFolders, rootFiles: processedRootFiles } =
+          processFilesForProject(updatedFiles, redFlags);
+
+        setFolders(processedFolders);
+        setRootFiles(processedRootFiles);
+      } else {
+        // Just organize files
+        const { folders: processedFolders, rootFiles: processedRootFiles } =
+          processFilesForProject(updatedFiles);
+
+        setFolders(processedFolders);
+        setRootFiles(processedRootFiles);
+      }
+    },
+    [files, project?.analysisResult],
+  );
+
   // Handle file download
   const handleFileDownload = useCallback((file: FileUploadType) => {
     if (file.downloadUrl) {
       // In a real app, this would trigger a download
       // For the mock, just show an alert
       alert(`Downloading file: ${file.fileName}`);
-      
+
       // In production, this would be:
       // window.open(file.downloadUrl, '_blank');
     }
@@ -176,7 +183,9 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     return (
       <div className="py-4">
         <div className="bg-[#FFF0EE] border-2 border-[--color-secondary] p-6 rounded-lg">
-          <h2 className="heading-primary heading-2 text-[--color-secondary] mb-2">ERROR LOADING PROJECT</h2>
+          <h2 className="heading-primary heading-2 text-[--color-secondary] mb-2">
+            ERROR LOADING PROJECT
+          </h2>
           <p className="heading-secondary text-2 text-[--color-text-dark]">
             {error || 'Project not found. Please check the URL and try again.'}
           </p>
@@ -195,10 +204,12 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     if (!selectedCategory || !project.analysisResult) {
       return null;
     }
-    
-    return project.analysisResult.categoryScores.find(
-      (cat) => cat.category === selectedCategory
-    ) || null;
+
+    return (
+      project.analysisResult.categoryScores.find(
+        (cat) => cat.category === selectedCategory,
+      ) || null
+    );
   };
 
   const selectedCategoryScore = getSelectedCategoryScore();
@@ -206,115 +217,133 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
   return (
     <div className="py-4">
       <ProjectHeader project={project} />
-      
+
       <div className="relative">
         {/* Show Score Overview or Red Flag Details first when analysis is available */}
         {project.analysisResult && (
-          <div className="relative" style={{ height: '800px', overflowY: 'auto' }}>
+          <div
+            className="relative"
+            style={{ height: '800px', overflowY: 'auto' }}
+          >
             {selectedCategoryScore ? (
-              <RedFlagDetails 
-                categoryScore={selectedCategoryScore} 
+              <RedFlagDetails
+                categoryScore={selectedCategoryScore}
                 onClose={handleBackToOverview}
               />
             ) : (
-              <ScoreOverview 
-                analysisResult={project.analysisResult} 
+              <ScoreOverview
+                analysisResult={project.analysisResult}
                 onCategoryClick={handleCategoryClick}
               />
             )}
           </div>
         )}
-        
+
         {/* Show a message if no analysis results are available yet */}
         {!project.analysisResult && (
           <div className="bg-white border border-[--color-bg-1] p-6 rounded-lg mb-8">
             {project.status === 'analyzing' ? (
               <>
-                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">ANALYSIS IN PROGRESS</h2>
+                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
+                  ANALYSIS IN PROGRESS
+                </h2>
                 <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  We&apos;re analyzing your project files to generate a CEARTscore.
+                  We&apos;re analyzing your project files to generate a
+                  CEARTscore.
                 </p>
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[--color-primary] mr-2"></div>
-                  <span className="heading-secondary text-3">Analysis in progress...</span>
+                  <span className="heading-secondary text-3">
+                    Analysis in progress...
+                  </span>
                 </div>
               </>
             ) : project.status === 'failed' ? (
               <>
-                <h2 className="heading-primary heading-2 text-[--color-secondary] mb-3">ANALYSIS FAILED</h2>
+                <h2 className="heading-primary heading-2 text-[--color-secondary] mb-3">
+                  ANALYSIS FAILED
+                </h2>
                 <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  {(project as any).analysisError || 'Analysis failed due to incomplete documentation.'}
+                  {(project as any).analysisError ||
+                    'Analysis failed due to incomplete documentation.'}
                 </p>
                 <div className="flex justify-center">
-                  <button 
+                  <button
                     onClick={async () => {
                       try {
                         setIsLoading(true);
                         await runAnalysis(projectId);
                         await fetchProjectDetails();
                       } catch (err) {
-                        console.error("Error running analysis:", err);
-                        setError("Failed to run analysis. Please try again.");
+                        console.error('Error running analysis:', err);
+                        setError('Failed to run analysis. Please try again.');
                       } finally {
                         setIsLoading(false);
                       }
-                    }} 
+                    }}
                     className="ceart-button ceart-button-primary"
                     disabled={isLoading}
                     data-testid="retry-analysis-button"
                   >
-                    {isLoading ? "Processing..." : "Retry Analysis"}
+                    {isLoading ? 'Processing...' : 'Retry Analysis'}
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">ANALYSIS PENDING</h2>
+                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
+                  ANALYSIS PENDING
+                </h2>
                 <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  {files.length > 0 
-                    ? 'Your files are ready for analysis. Run CEARTscore analysis to evaluate your project.' 
+                  {files.length > 0
+                    ? 'Your files are ready for analysis. Run CEARTscore analysis to evaluate your project.'
                     : 'Upload files to analyze your project and generate a CEARTscore.'}
                 </p>
                 <div className="flex justify-center">
-                  <button 
+                  <button
                     onClick={async () => {
                       try {
                         if (files.length === 0) {
-                          alert("Please upload files before running analysis");
+                          alert('Please upload files before running analysis');
                           return;
                         }
-                        
+
                         setIsLoading(true);
                         await runAnalysis(projectId);
                         await fetchProjectDetails();
                       } catch (err) {
-                        console.error("Error running analysis:", err);
-                        setError("Failed to run analysis. Please try again.");
+                        console.error('Error running analysis:', err);
+                        setError('Failed to run analysis. Please try again.');
                       } finally {
                         setIsLoading(false);
                       }
-                    }} 
+                    }}
                     className="ceart-button ceart-button-primary"
                     disabled={isLoading || files.length === 0}
                     data-testid="run-analysis-button"
                   >
-                    {isLoading ? "Processing..." : "Run CEARTscore Analysis"}
+                    {isLoading ? 'Processing...' : 'Run CEARTscore Analysis'}
                   </button>
                 </div>
               </>
             )}
           </div>
         )}
-        
+
         {/* File Upload always comes next (either after analysis results or pending message) */}
-        <FileUpload projectId={projectId} onUploadComplete={handleUploadComplete} />
-        
+        <FileUpload
+          projectId={projectId}
+          onUploadComplete={handleUploadComplete}
+        />
+
         {/* Enhanced folder browser with nested folder structure - use key to force proper re-renders */}
-        <FolderBrowser 
+        <FolderBrowser
           key={`folder-browser-${projectId}-${isLoadingFiles ? 'loading' : 'loaded'}`}
-          folders={folders} 
-          files={rootFiles} 
-          allRedFlags={project.analysisResult?.categoryScores.flatMap(cat => cat.redFlags)}
+          folders={folders}
+          files={rootFiles}
+          allRedFlags={project.analysisResult?.categoryScores.flatMap(
+            (cat) => cat.redFlags,
+          )}
           isLoading={isLoadingFiles}
           onDownload={handleFileDownload}
         />

@@ -14,9 +14,12 @@ type ProjectPageProps = {
   searchParams: { token?: string };
 };
 
-export default function ProjectPage({ params, searchParams }: ProjectPageProps) {
+export default function ProjectPage({
+  params,
+  searchParams,
+}: ProjectPageProps) {
   const { id } = params;
-  
+
   return (
     <TokenGate searchParams={searchParams}>
       <Container>

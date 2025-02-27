@@ -5,29 +5,29 @@
 
 :root {
   /* Brand colors */
-  --color-primary: #FA7802;
-  --color-secondary: #F94001;
-  --color-tertiary-1: #7EB1A5;
-  --color-tertiary-2: #AAB356;
-  --color-tertiary-3: #F7BA09;
-  
+  --color-primary: #fa7802;
+  --color-secondary: #f94001;
+  --color-tertiary-1: #7eb1a5;
+  --color-tertiary-2: #aab356;
+  --color-tertiary-3: #f7ba09;
+
   /* Neutral colors */
-  --color-neutral-1: #E9DCBA;
-  --color-neutral-2: #98A285;
+  --color-neutral-1: #e9dcba;
+  --color-neutral-2: #98a285;
   --color-neutral-3: #314444;
-  --color-neutral-4: #414C26;
+  --color-neutral-4: #414c26;
   --color-neutral-5: #574216;
-  
+
   /* Text colors */
   --color-text-dark: #374149;
-  --color-text-light: #FFFFFF;
-  
+  --color-text-light: #ffffff;
+
   /* Background greyscale */
-  --color-bg-1: #EEEEEE;
+  --color-bg-1: #eeeeee;
   --color-bg-2: #858589;
   --color-bg-3: #595959;
   --color-bg-4: #374149;
-  --color-bg-5: #1E272E;
+  --color-bg-5: #1e272e;
 }
 
 .heading-primary {

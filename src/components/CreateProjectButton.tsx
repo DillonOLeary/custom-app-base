@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { Project } from '@/types/project';
 
 interface CreateProjectButtonProps {
-  onProjectCreate: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => Promise<void>;
+  onProjectCreate: (
+    project: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'status'>,
+  ) => Promise<void>;
 }
 
-export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProps) {
+export function CreateProjectButton({
+  onProjectCreate,
+}: CreateProjectButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,7 +23,9 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -29,16 +35,20 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Simple validation
-    if (!formData.name.trim() || !formData.location.trim() || formData.capacity <= 0) {
+    if (
+      !formData.name.trim() ||
+      !formData.location.trim() ||
+      formData.capacity <= 0
+    ) {
       setError('Please fill all fields correctly.');
       return;
     }
-    
+
     setError('');
     setIsSubmitting(true);
-    
+
     try {
       await onProjectCreate(formData);
       setFormData({
@@ -67,19 +77,27 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="create-project-modal">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          data-testid="create-project-modal"
+        >
           <div className="ceart-card p-6 w-full max-w-md">
-            <h2 className="heading-primary heading-1 text-center mb-4 text-[--color-text-dark]">CREATE NEW PROJECT</h2>
-            
+            <h2 className="heading-primary heading-1 text-center mb-4 text-[--color-text-dark]">
+              CREATE NEW PROJECT
+            </h2>
+
             {error && (
               <div className="mb-4 p-2 bg-red-100 text-red-800 rounded-md text-sm">
                 {error}
               </div>
             )}
-            
+
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="name" className="block heading-secondary heading-3 text-[--color-text-dark] mb-1">
+                <label
+                  htmlFor="name"
+                  className="block heading-secondary heading-3 text-[--color-text-dark] mb-1"
+                >
                   Project Name
                 </label>
                 <input
@@ -93,9 +111,12 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
                   required
                 />
               </div>
-              
+
               <div className="mb-4">
-                <label htmlFor="location" className="block heading-secondary heading-3 text-[--color-text-dark] mb-1">
+                <label
+                  htmlFor="location"
+                  className="block heading-secondary heading-3 text-[--color-text-dark] mb-1"
+                >
                   Location
                 </label>
                 <input
@@ -109,9 +130,12 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
                   required
                 />
               </div>
-              
+
               <div className="mb-4">
-                <label htmlFor="type" className="block heading-secondary heading-3 text-[--color-text-dark] mb-1">
+                <label
+                  htmlFor="type"
+                  className="block heading-secondary heading-3 text-[--color-text-dark] mb-1"
+                >
                   Energy Type
                 </label>
                 <select
@@ -130,9 +154,12 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
                   <option value="other">Other</option>
                 </select>
               </div>
-              
+
               <div className="mb-6">
-                <label htmlFor="capacity" className="block heading-secondary heading-3 text-[--color-text-dark] mb-1">
+                <label
+                  htmlFor="capacity"
+                  className="block heading-secondary heading-3 text-[--color-text-dark] mb-1"
+                >
                   Capacity (MW)
                 </label>
                 <input
@@ -148,7 +175,7 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
                   required
                 />
               </div>
-              
+
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"

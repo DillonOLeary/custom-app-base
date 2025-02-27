@@ -5,7 +5,10 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = 'Search projects...' }: SearchBarProps) {
+export function SearchBar({
+  onSearch,
+  placeholder = 'Search projects...',
+}: SearchBarProps) {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,7 +24,7 @@ export function SearchBar({ onSearch, placeholder = 'Search projects...' }: Sear
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setQuery(newValue);
-    
+
     // Debounce search execution so it doesn't happen on every keystroke
     if (newValue.trim() === '') {
       // Clear immediately

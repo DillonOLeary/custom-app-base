@@ -16,14 +16,12 @@ async function Content({ searchParams }: { searchParams: SearchParams }) {
     apiKey: process.env.COPILOT_API_KEY ?? '',
     token: typeof token === 'string' ? token : undefined,
   });
-  
+
   // These API calls are kept for session validation but not directly used
   await copilot.retrieveWorkspace();
   await copilot.getTokenPayload?.();
-  
-  return (
-    <ProjectsDashboard />
-  );
+
+  return <ProjectsDashboard />;
 }
 
 export default function Home({ searchParams }: { searchParams: SearchParams }) {

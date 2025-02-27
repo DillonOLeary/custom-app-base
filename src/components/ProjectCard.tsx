@@ -45,42 +45,58 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xl">{typeIcons[project.type]}</span>
-            <h3 className="heading-primary heading-2 text-[--color-text-dark] line-clamp-1">{project.name}</h3>
+            <h3 className="heading-primary heading-2 text-[--color-text-dark] line-clamp-1">
+              {project.name}
+            </h3>
           </div>
-          <p className="heading-secondary text-3 text-[--color-text-dark] mt-1 line-clamp-1">{project.location}</p>
+          <p className="heading-secondary text-3 text-[--color-text-dark] mt-1 line-clamp-1">
+            {project.location}
+          </p>
         </div>
         <div className="flex flex-col items-end">
-          <span className="heading-secondary text-3 text-[--color-primary] font-bold">{project.capacity} MW</span>
-          <span className={`ceart-score-badge mt-1 ${statusColors[project.status]}`}>
+          <span className="heading-secondary text-3 text-[--color-primary] font-bold">
+            {project.capacity} MW
+          </span>
+          <span
+            className={`ceart-score-badge mt-1 ${statusColors[project.status]}`}
+          >
             {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
           </span>
         </div>
       </div>
-      
+
       <div className="mt-auto pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div className="flex flex-col">
-          <span className="text-3 text-[--color-bg-3]">Created: {formatDate(project.createdAt)}</span>
+          <span className="text-3 text-[--color-bg-3]">
+            Created: {formatDate(project.createdAt)}
+          </span>
           {project.description && (
-            <span className="text-3 text-[--color-bg-3] line-clamp-1 max-w-[220px]">{project.description}</span>
+            <span className="text-3 text-[--color-bg-3] line-clamp-1 max-w-[220px]">
+              {project.description}
+            </span>
           )}
         </div>
-        
+
         {project.score !== undefined && (
           <div className="flex items-center">
-            <span className="heading-secondary text-3 important-text text-[--color-text-dark] mr-2">CEARTscore:</span>
+            <span className="heading-secondary text-3 important-text text-[--color-text-dark] mr-2">
+              CEARTscore:
+            </span>
             <div className="h-2.5 w-16 bg-[--color-bg-1] rounded-full">
               <div
                 className={`h-2.5 rounded-full ${
                   project.score >= 70
                     ? 'bg-[--color-tertiary-2]'
                     : project.score >= 40
-                    ? 'bg-[--color-tertiary-3]'
-                    : 'bg-[--color-secondary]'
+                      ? 'bg-[--color-tertiary-3]'
+                      : 'bg-[--color-secondary]'
                 }`}
                 style={{ width: `${project.score}%` }}
               ></div>
             </div>
-            <span className="ml-2 heading-primary heading-3 text-[--color-primary]">{project.score}</span>
+            <span className="ml-2 heading-primary heading-3 text-[--color-primary]">
+              {project.score}
+            </span>
           </div>
         )}
       </div>

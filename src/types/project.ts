@@ -1,4 +1,4 @@
-export type ScoreCategory = 
+export type ScoreCategory =
   | 'completeness'
   | 'financialClaims'
   | 'contractCoverage'
