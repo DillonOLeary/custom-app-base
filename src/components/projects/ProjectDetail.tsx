@@ -309,7 +309,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
                           alert('Please upload files before running analysis');
                           return;
                         }
-
+                        // Added a test comment to see if git hooks run
                         setIsLoading(true);
                         await runAnalysis(projectId);
                         await fetchProjectDetails();
