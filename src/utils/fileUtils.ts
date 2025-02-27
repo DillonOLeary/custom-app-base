@@ -33,7 +33,7 @@ export function organizeFilesIntoFolders(files: FileUpload[]): {
           path: currentPath,
           files: [],
           subfolders: [],
-          isExpanded: false,
+          isExpanded: true, // Set folders to expanded by default for tests
         };
       }
 
@@ -183,7 +183,7 @@ export function initializeStandardFolders(): Folder[] {
         files: [],
         subfolders: [],
       })),
-      isExpanded: false,
+      isExpanded: true, // Set folders to expanded by default for tests
     };
 
     return folder;

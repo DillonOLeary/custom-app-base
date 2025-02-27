@@ -4,8 +4,8 @@ import { test, expect, Page } from '@playwright/test';
  * These tests focus on the analysis functionality including
  * running analysis, viewing results, and interacting with analysis components.
  */
-// Moving to skip while we prioritize user flow tests - will enable incrementally
-test.describe.skip('Analysis and CEARTscore tests', () => {
+// Tests for analysis and CEARTscore functionality
+test.describe('Analysis and CEARTscore tests', () => {
   // Helper function to go to a project page
   async function goToProjectPage(page: Page, projectId: string) {
     await page.goto(`/projects/${projectId}`);
