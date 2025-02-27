@@ -37,6 +37,8 @@ The tests are automatically run on GitHub Actions when:
 
 You can see the test results in the GitHub Actions tab of the repository.
 
+Note: Playwright is excluded from the production build process to avoid issues with Vercel deployment. This ensures the end-to-end tests run properly in the CI environment without affecting the production deployment.
+
 ## Troubleshooting
 
 ### Browserslist Warning

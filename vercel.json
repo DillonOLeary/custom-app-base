@@ -1,0 +1,10 @@
+{
+  "installCommand": "yarn install --immutable",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "ignoreCommand": "echo 'Skipping Playwright installation in production'"
+}
