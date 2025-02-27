@@ -36,3 +36,22 @@ The tests are automatically run on GitHub Actions when:
 - A pull request is opened against the main branch
 
 You can see the test results in the GitHub Actions tab of the repository.
+
+## Troubleshooting
+
+### Browserslist Warning
+
+If you see the following warning when running tests:
+
+```
+Browserslist: caniuse-lite is outdated. Please run:
+npx update-browserslist-db@latest
+```
+
+You can update the browserslist database using Yarn:
+
+```bash
+yarn up browserslist caniuse-lite
+```
+
+This has also been added to the CI workflow to automatically handle this when tests run in GitHub Actions.
