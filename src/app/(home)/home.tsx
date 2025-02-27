@@ -9,29 +9,26 @@ import { ProjectsDashboard } from '@/components/project-dashboard/ProjectsDashbo
  */
 export const revalidate = 180;
 
-// Using JSX.Element as return type to fix TypeScript error
-async function Content({
+// In Next.js App Router, async server components are supported natively
+export default async function Home({
   searchParams,
 }: {
   searchParams: SearchParams;
-}): Promise<JSX.Element> {
-  // Setup Copilot API client
+}) {
+  // Setup Copilot API client (server-side)
   const { token } = searchParams;
   const copilot = copilotApi({
     apiKey: process.env.COPILOT_API_KEY ?? '',
     token: typeof token === 'string' ? token : undefined,
   });
 
-  // These API calls are kept for session validation but not directly used
+  // Validate session server-side
   try {
     await copilot.retrieveWorkspace();
-
-    // Only call getTokenPayload if it exists
     if (typeof copilot.getTokenPayload === 'function') {
       await copilot.getTokenPayload();
     }
   } catch (error) {
-    // In development mode or tests, we can continue without valid Copilot SDK
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test'
@@ -42,13 +39,10 @@ async function Content({
     }
   }
 
-  return <ProjectsDashboard />;
-}
-
-export default function Home({ searchParams }: { searchParams: SearchParams }) {
+  // Return the components directly from the server component
   return (
     <TokenGate searchParams={searchParams}>
-      <Content searchParams={searchParams} />
+      <ProjectsDashboard />
     </TokenGate>
   );
 }
