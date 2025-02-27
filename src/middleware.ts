@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isTestOrCIEnvironment } from './utils/environment';
 
 /**
  * Enhanced security middleware that adds comprehensive security headers
  * to protect against common web vulnerabilities.
  */
 export function middleware(request: NextRequest) {
-  // Skip middleware in development or Vercel production for easier debugging
-  if (process.env.NODE_ENV === 'development' || process.env.VERCEL === '1') {
+  // Skip middleware in test, CI environments, or Vercel production for easier debugging
+  if (isTestOrCIEnvironment() || process.env.VERCEL === '1') {
     return NextResponse.next();
   }
 

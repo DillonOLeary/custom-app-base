@@ -100,14 +100,14 @@ export function RedFlagDetails({
       </div>
 
       <h3 className="heading-primary heading-3 text-[--color-text-dark] mb-4">
-        IDENTIFIED ISSUES ({redFlags.length})
+        RED FLAGS ({redFlags.length})
       </h3>
 
       <div className="space-y-4">
         {redFlags.map((redFlag) => (
           <div
             key={redFlag.id}
-            className="bg-white border border-[--color-bg-1] p-4 rounded-lg shadow-sm"
+            className="bg-white border border-[--color-bg-1] p-4 rounded-lg shadow-sm red-flag-item"
             data-testid={`red-flag-${redFlag.id}`}
           >
             <div className="flex flex-wrap justify-between items-start mb-2">

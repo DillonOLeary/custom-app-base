@@ -15,6 +15,95 @@ const mockResponses = {
       capacity: 150,
       status: 'completed',
       score: 87,
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-15T00:00:00Z',
+      analysisResult: {
+        totalScore: 87,
+        lastUpdated: '2023-01-15T00:00:00Z',
+        redFlagCount: 5,
+        categoryScores: [
+          {
+            category: 'completeness',
+            score: 18,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf1',
+                category: 'completeness',
+                title: 'Missing Environmental Impact Report',
+                description:
+                  'The environmental impact assessment report is missing from the data room.',
+                impact: 'medium',
+                pointsDeducted: 2,
+              },
+            ],
+          },
+          {
+            category: 'financialClaims',
+            score: 16,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf2',
+                category: 'financialClaims',
+                title: 'Inconsistent Revenue Projections',
+                description:
+                  'The financial model shows inconsistent revenue projections compared to market data.',
+                impact: 'high',
+                pointsDeducted: 4,
+              },
+            ],
+          },
+          {
+            category: 'contractCoverage',
+            score: 17,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf3',
+                category: 'contractCoverage',
+                title: 'Missing Interconnection Agreement',
+                description:
+                  'The project is missing a finalized interconnection agreement.',
+                impact: 'medium',
+                pointsDeducted: 3,
+              },
+            ],
+          },
+          {
+            category: 'contractQuality',
+            score: 19,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf4',
+                category: 'contractQuality',
+                title: 'Incomplete Termination Clause',
+                description:
+                  'The PPA contains an incomplete termination clause that may pose legal risks.',
+                impact: 'low',
+                pointsDeducted: 1,
+              },
+            ],
+          },
+          {
+            category: 'reputationScreening',
+            score: 17,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf5',
+                category: 'reputationScreening',
+                title: 'Contractor Performance Issues',
+                description:
+                  'The EPC contractor has had performance issues on similar projects in the past.',
+                impact: 'medium',
+                pointsDeducted: 3,
+              },
+            ],
+          },
+        ],
+      },
     },
     {
       id: '2',
@@ -22,7 +111,9 @@ const mockResponses = {
       location: 'Maine, USA',
       type: 'wind',
       capacity: 75,
-      status: 'analyzing',
+      status: 'pending',
+      createdAt: '2023-02-01T00:00:00Z',
+      updatedAt: '2023-02-10T00:00:00Z',
     },
     {
       id: '3',
@@ -31,6 +122,98 @@ const mockResponses = {
       type: 'hydro',
       capacity: 25,
       status: 'pending',
+      createdAt: '2023-03-01T00:00:00Z',
+      updatedAt: '2023-03-05T00:00:00Z',
+    },
+    {
+      id: '4',
+      name: 'GEOTHERMAL ENERGY PROJECT',
+      location: 'Nevada, USA',
+      type: 'geothermal',
+      capacity: 50,
+      status: 'completed',
+      score: 92,
+      createdAt: '2023-04-01T00:00:00Z',
+      updatedAt: '2023-04-20T00:00:00Z',
+      analysisResult: {
+        totalScore: 92,
+        lastUpdated: '2023-04-20T00:00:00Z',
+        redFlagCount: 3,
+        categoryScores: [
+          {
+            category: 'completeness',
+            score: 19,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf6',
+                category: 'completeness',
+                title: 'Missing Water Usage Report',
+                description:
+                  'The water usage report is missing from the documentation.',
+                impact: 'low',
+                pointsDeducted: 1,
+              },
+            ],
+          },
+          {
+            category: 'financialClaims',
+            score: 18,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf7',
+                category: 'financialClaims',
+                title: 'Unclear O&M Cost Structure',
+                description:
+                  'The O&M cost structure is not clearly defined in the financial model.',
+                impact: 'medium',
+                pointsDeducted: 2,
+              },
+            ],
+          },
+          {
+            category: 'contractCoverage',
+            score: 20,
+            maxScore: 20,
+            redFlags: [],
+          },
+          {
+            category: 'contractQuality',
+            score: 20,
+            maxScore: 20,
+            redFlags: [],
+          },
+          {
+            category: 'reputationScreening',
+            score: 15,
+            maxScore: 20,
+            redFlags: [
+              {
+                id: 'rf8',
+                category: 'reputationScreening',
+                title: 'Past Regulatory Issues',
+                description:
+                  'The developer has had regulatory compliance issues in the past.',
+                impact: 'high',
+                pointsDeducted: 5,
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: '5',
+      name: 'FAILED ANALYSIS PROJECT',
+      location: 'Texas, USA',
+      type: 'solar',
+      capacity: 100,
+      status: 'failed',
+      createdAt: '2023-05-01T00:00:00Z',
+      updatedAt: '2023-05-10T00:00:00Z',
+      analysisError:
+        'Insufficient data to complete analysis. Please upload more files.',
     },
   ],
   tokenPayload: {

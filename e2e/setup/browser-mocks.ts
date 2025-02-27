@@ -10,6 +10,55 @@ import { mockData } from './sdk-mock';
  * Inject SDK mocks into the browser page
  * This should be called at the start of each test that uses the Copilot SDK
  */
+// Mock file data for testing
+const mockFiles = [
+  {
+    id: 'file1',
+    fileName: 'Financial_Projections_2023.xlsx',
+    fileSize: 1024000,
+    uploadDate: '2023-01-10T00:00:00Z',
+    status: 'completed',
+    path: 'Financial/',
+    downloadUrl: '#download',
+  },
+  {
+    id: 'file2',
+    fileName: 'Site_Assessment_Report.pdf',
+    fileSize: 2048000,
+    uploadDate: '2023-01-05T00:00:00Z',
+    status: 'completed',
+    path: 'Technical/',
+    downloadUrl: '#download',
+  },
+  {
+    id: 'file3',
+    fileName: 'Environmental_Impact_Study.pdf',
+    fileSize: 3072000,
+    uploadDate: '2023-01-03T00:00:00Z',
+    status: 'completed',
+    path: 'Environmental/',
+    downloadUrl: '#download',
+  },
+  {
+    id: 'file4',
+    fileName: 'Community_Engagement_Plan.docx',
+    fileSize: 512000,
+    uploadDate: '2023-01-08T00:00:00Z',
+    status: 'completed',
+    path: 'Social/',
+    downloadUrl: '#download',
+  },
+  {
+    id: 'file5',
+    fileName: 'Permit_Applications.zip',
+    fileSize: 4096000,
+    uploadDate: '2023-01-01T00:00:00Z',
+    status: 'completed',
+    path: 'Regulatory/',
+    downloadUrl: '#download',
+  },
+];
+
 export async function injectSdkMocksToPage(page: Page): Promise<void> {
   // Define the mock implementation to be injected
   const sdkMockScript = `
@@ -29,7 +78,8 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
       },
       getProjectById: async (id) => {
         console.log('[Mock] Getting project by ID:', id);
-        return ${JSON.stringify(mockData.projects[0])};
+        const project = ${JSON.stringify(mockData.projects)}.find(p => p.id === id);
+        return project || ${JSON.stringify(mockData.projects[0])};
       },
       createProject: async (project) => {
         console.log('[Mock] Creating project:', project);
@@ -38,6 +88,15 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
           ...project,
           status: 'pending'
         };
+      },
+      getProjectFiles: async (projectId) => {
+        console.log('[Mock] Getting files for project:', projectId);
+        return ${JSON.stringify(mockFiles)};
+      },
+      runAnalysis: async (projectId) => {
+        console.log('[Mock] Running analysis for project:', projectId);
+        // Return a success response 
+        return { success: true };
       }
     };
 
