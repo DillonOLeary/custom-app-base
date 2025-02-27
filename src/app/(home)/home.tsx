@@ -1,8 +1,8 @@
 import { copilotApi } from 'copilot-node-sdk';
 
-import { Welcome } from '@/app/(home)/welcome';
 import { TokenGate } from '@/components/TokenGate';
 import { Container } from '@/components/Container';
+import { ProjectsDashboard } from '@/components/ProjectsDashboard';
 
 /**
  * The revalidate property determine's the cache TTL for this page and
@@ -18,10 +18,20 @@ async function Content({ searchParams }: { searchParams: SearchParams }) {
   });
   const workspace = await copilot.retrieveWorkspace();
   const session = await copilot.getTokenPayload?.();
-  console.log({ workspace, session });
+  
   return (
     <Container>
-      <Welcome portalUrl={workspace.portalUrl} />
+      <div className="py-8">
+        <div className="flex flex-col items-center mb-8">
+          <h1 className="heading-primary heading-1 text-[--color-text-dark] mb-2">RENEWABLE ENERGY PROJECT SCANNER</h1>
+          <div className="w-16 h-1 bg-[--color-primary] rounded mb-4"></div>
+          <p className="heading-secondary text-1 text-center text-[--color-text-dark] max-w-2xl">
+            Upload and analyze your renewable energy project data rooms to get your <span className="important-text text-[--color-primary] font-bold">CEARTscore</span>.
+          </p>
+        </div>
+        
+        <ProjectsDashboard />
+      </div>
     </Container>
   );
 }
