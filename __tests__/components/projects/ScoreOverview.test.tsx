@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ScoreOverview } from '@/components/projects/ScoreOverview';
 import { mockProject } from '../../support/testUtils';
 import { CATEGORY_DESCRIPTIONS } from '@/utils/categoryDescriptions';
+import { ScoreCategory } from '@/types/project';
 
 describe('ScoreOverview', () => {
   const mockOnCategoryClick = jest.fn();

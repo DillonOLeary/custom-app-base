@@ -3,10 +3,12 @@ import { render, screen } from '@testing-library/react';
 import { FileList } from '@/components/projects/FileList';
 import { mockProject } from '../../support/testUtils';
 import { formatFileSize } from '@/utils/formatters';
+import { FileUpload } from '@/types/project';
 
 describe('FileList', () => {
   test('renders files correctly', () => {
-    const { files } = mockProject;
+    // Make sure files is defined and not undefined
+    const files = mockProject.files as FileUpload[];
     render(<FileList files={files} isLoading={false} />);
     
     // Check the component title
