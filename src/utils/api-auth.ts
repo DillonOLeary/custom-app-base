@@ -18,7 +18,16 @@ export async function validateToken(
         nextUrl?: { searchParams: { get: (key: string) => string | null } };
       },
 ) {
-  // Skip token validation in development/local environment
+  // Special handling for static generation and build-time execution
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log('Running in build phase - skipping token validation');
+    const copilot = copilotApi({
+      apiKey: process.env.COPILOT_API_KEY || '',
+    });
+    return { copilot, response: null, claims: null };
+  }
+
+  // Regular development environment check
   if (
     process.env.COPILOT_ENV === 'local' ||
     process.env.NODE_ENV === 'development'
