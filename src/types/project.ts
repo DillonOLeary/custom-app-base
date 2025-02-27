@@ -68,6 +68,7 @@ export interface Project {
   analysisResult?: AnalysisResult;
   files?: FileUpload[]; // Flat list of all files
   folders?: Folder[]; // Root folders in the data room
+  rootFiles?: FileUpload[]; // Files at the root level (not in any folder)
   description?: string;
   analysisError?: string; // Error message when analysis fails
 }

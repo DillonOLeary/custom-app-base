@@ -232,7 +232,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
               <>
                 <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">ANALYSIS IN PROGRESS</h2>
                 <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  We're analyzing your project files to generate a CEARTscore.
+                  We&apos;re analyzing your project files to generate a CEARTscore.
                 </p>
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[--color-primary] mr-2"></div>

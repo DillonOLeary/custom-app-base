@@ -25,34 +25,7 @@ export function FileUpload({ projectId, onUploadComplete }: FileUploadProps) {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback(
-    async (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      setIsDragging(false);
-      
-      const files = e.dataTransfer.files;
-      
-      if (files.length > 0) {
-        await uploadFiles(files);
-      }
-    },
-    [projectId]
-  );
-
-  const handleFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      
-      if (files && files.length > 0) {
-        await uploadFiles(files);
-        // Reset the file input
-        e.target.value = '';
-      }
-    },
-    [projectId]
-  );
-
-  const uploadFiles = async (files: FileList) => {
+  const uploadFiles = useCallback(async (files: FileList) => {
     setIsUploading(true);
     setError(null);
     
@@ -68,7 +41,34 @@ export function FileUpload({ projectId, onUploadComplete }: FileUploadProps) {
     } finally {
       setIsUploading(false);
     }
-  };
+  }, [projectId, onUploadComplete]);
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      
+      const files = e.dataTransfer.files;
+      
+      if (files.length > 0) {
+        await uploadFiles(files);
+      }
+    },
+    [uploadFiles]
+  );
+
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      
+      if (files && files.length > 0) {
+        await uploadFiles(files);
+        // Reset the file input
+        e.target.value = '';
+      }
+    },
+    [uploadFiles]
+  );
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {

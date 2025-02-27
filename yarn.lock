@@ -2048,6 +2048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: 10c0/9a1404bf287164481cb9b97f6bb638f78f955be57c40c6513b7655160beb29df6f84c915aaf4089a1559c216557dc4d2f79b48d978742d3ae10b937420ddac60
+  languageName: node
+  linkType: hard
+
 "@types/yargs-parser@npm:*":
   version: 21.0.3
   resolution: "@types/yargs-parser@npm:21.0.3"
@@ -3258,6 +3265,7 @@ __metadata:
     "@types/react-dom": "npm:^18.2.0"
     "@types/react-linkify": "npm:^1"
     "@types/testing-library__jest-dom": "npm:^6.0.0"
+    "@types/uuid": "npm:^10.0.0"
     autoprefixer: "npm:^10.4.0"
     copilot-design-system: "npm:^0.6.16"
     copilot-node-sdk: "npm:^3.5.0"

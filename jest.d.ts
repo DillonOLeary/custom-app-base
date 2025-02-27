@@ -1,5 +1,6 @@
 /// <reference types="jest" />
 /// <reference types="@testing-library/jest-dom" />
+/// <reference types="@types/testing-library__jest-dom" />
 
 // This file ensures TypeScript recognizes the extended Jest matchers from jest-dom
 import '@testing-library/jest-dom';

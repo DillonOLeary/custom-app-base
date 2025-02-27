@@ -108,11 +108,12 @@ export function addMissingFilesToFolders(folders: Folder[], redFlags: RedFlag[])
           const fileName = missingFile.substring(lastSlashIndex + 1);
           
           // Find the folder and add the missing file
-          if (folderMap[folderPath]) {
-            if (!folderMap[folderPath].missingRecommendedFiles) {
-              folderMap[folderPath].missingRecommendedFiles = [];
+          const targetFolder = folderMap[folderPath];
+          if (targetFolder) {
+            if (!targetFolder.missingRecommendedFiles) {
+              targetFolder.missingRecommendedFiles = [];
             }
-            folderMap[folderPath].missingRecommendedFiles.push(fileName);
+            targetFolder.missingRecommendedFiles.push(fileName);
           }
         }
       });
