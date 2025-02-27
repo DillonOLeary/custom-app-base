@@ -210,7 +210,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
       <div className="relative">
         {/* Show Score Overview or Red Flag Details first when analysis is available */}
         {project.analysisResult && (
-          <>
+          <div className="relative" style={{ height: '800px', overflowY: 'auto' }}>
             {selectedCategoryScore ? (
               <RedFlagDetails 
                 categoryScore={selectedCategoryScore} 
@@ -222,7 +222,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
                 onCategoryClick={handleCategoryClick}
               />
             )}
-          </>
+          </div>
         )}
         
         {/* Show a message if no analysis results are available yet */}

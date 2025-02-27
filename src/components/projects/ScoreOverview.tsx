@@ -94,7 +94,7 @@ export function ScoreOverview({ analysisResult, onCategoryClick }: ScoreOverview
             return (
               <div 
                 key={category.category}
-                className="border border-[--color-bg-1] rounded-lg overflow-hidden transition-all"
+                className="border border-[--color-bg-1] rounded-lg overflow-hidden"
               >
                 {/* Category header - always visible */}
                 <div 
@@ -139,9 +139,9 @@ export function ScoreOverview({ analysisResult, onCategoryClick }: ScoreOverview
                   </div>
                 </div>
                 
-                {/* Expanded content - only visible when expanded */}
+                {/* Expanded content */}
                 {isExpanded && (
-                  <div className="p-4 border-t border-[--color-bg-1]">
+                  <div className="border-t border-[--color-bg-1] p-4">
                     <p className="text-[--color-text-dark] mb-4 text-3">
                       {CATEGORY_DESCRIPTIONS[category.category].description}
                     </p>

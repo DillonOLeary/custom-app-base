@@ -1,7 +1,6 @@
 import { copilotApi } from 'copilot-node-sdk';
 
 import { TokenGate } from '@/components/TokenGate';
-import { Container } from '@/components/Container';
 import { ProjectsDashboard } from '@/components/ProjectsDashboard';
 
 /**
@@ -11,13 +10,16 @@ import { ProjectsDashboard } from '@/components/ProjectsDashboard';
 export const revalidate = 180;
 
 async function Content({ searchParams }: { searchParams: SearchParams }) {
+  // Setup Copilot API client
   const { token } = searchParams;
   const copilot = copilotApi({
     apiKey: process.env.COPILOT_API_KEY ?? '',
     token: typeof token === 'string' ? token : undefined,
   });
-  const workspace = await copilot.retrieveWorkspace();
-  const session = await copilot.getTokenPayload?.();
+  
+  // These API calls are kept for session validation but not directly used
+  await copilot.retrieveWorkspace();
+  await copilot.getTokenPayload?.();
   
   return (
     <ProjectsDashboard />
