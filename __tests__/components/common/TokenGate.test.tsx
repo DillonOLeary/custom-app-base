@@ -84,38 +84,44 @@ describe('TokenGate', () => {
     expect(getByText('Protected Content')).toBeInTheDocument();
 
     // Also test with different empty token values
-    const { getByText: getByText2 } = render(
+    const { container: container2 } = render(
       <TokenGate searchParams={{ token: '' }}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-    expect(getByText2('Protected Content')).toBeInTheDocument();
+    expect(container2.textContent).toContain('Protected Content');
 
     // Test with empty search params
-    const { getByText: getByText3 } = render(
+    const { container: container3 } = render(
       <TokenGate searchParams={{}}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-    expect(getByText3('Protected Content')).toBeInTheDocument();
+    expect(container3.textContent).toContain('Protected Content');
 
     // Restore the original NODE_ENV
     Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 
-  test('handles different environment values correctly', () => {
+  test('handles test environment correctly', () => {
     // Test with 'test' environment
     const originalNodeEnv = process.env.NODE_ENV;
     Object.defineProperty(process.env, 'NODE_ENV', { value: 'test' });
 
-    const { getByText } = render(
+    const { container } = render(
       <TokenGate searchParams={{}}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-    expect(getByText('Protected Content')).toBeInTheDocument();
+    expect(container.textContent).toContain('Protected Content');
 
+    // Restore environment
+    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
+  });
+
+  test('requires token in production-like environments', () => {
     // Test with staging environment (should require token)
+    const originalNodeEnv = process.env.NODE_ENV;
     Object.defineProperty(process.env, 'NODE_ENV', { value: 'staging' });
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
 
