@@ -23,9 +23,16 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
 /**
  * Get request with proper error handling
  */
-export async function get<T>(url: string): Promise<T> {
+export async function get<T>(url: string, token?: string): Promise<T> {
   try {
-    const response = await fetch(url);
+    const headers: HeadersInit = {};
+    if (token) {
+      headers['X-Copilot-Token'] = token;
+    }
+
+    const response = await fetch(url, {
+      headers,
+    });
     return await handleApiResponse<T>(response);
   } catch (error) {
     console.error(`GET request failed for ${url}:`, error);
@@ -36,13 +43,23 @@ export async function get<T>(url: string): Promise<T> {
 /**
  * Post request with proper error handling
  */
-export async function post<T, D = unknown>(url: string, data?: D): Promise<T> {
+export async function post<T, D = unknown>(
+  url: string,
+  data?: D,
+  token?: string,
+): Promise<T> {
   try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['X-Copilot-Token'] = token;
+    }
+
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: data ? JSON.stringify(data) : undefined,
     });
 
@@ -56,13 +73,23 @@ export async function post<T, D = unknown>(url: string, data?: D): Promise<T> {
 /**
  * Put request with proper error handling
  */
-export async function put<T, D = unknown>(url: string, data?: D): Promise<T> {
+export async function put<T, D = unknown>(
+  url: string,
+  data?: D,
+  token?: string,
+): Promise<T> {
   try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['X-Copilot-Token'] = token;
+    }
+
     const response = await fetch(url, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: data ? JSON.stringify(data) : undefined,
     });
 
@@ -79,10 +106,18 @@ export async function put<T, D = unknown>(url: string, data?: D): Promise<T> {
 export async function postFormData<T>(
   url: string,
   formData: FormData,
+  token?: string,
 ): Promise<T> {
   try {
+    const headers: HeadersInit = {};
+
+    if (token) {
+      headers['X-Copilot-Token'] = token;
+    }
+
     const response = await fetch(url, {
       method: 'POST',
+      headers,
       body: formData,
     });
 

@@ -6,10 +6,15 @@ import { FileUpload as FileUploadType } from '@/types/project';
 
 interface FileUploadProps {
   projectId: string;
+  token?: string;
   onUploadComplete: (file: FileUploadType) => void;
 }
 
-export function FileUpload({ projectId, onUploadComplete }: FileUploadProps) {
+export function FileUpload({
+  projectId,
+  token,
+  onUploadComplete,
+}: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +39,7 @@ export function FileUpload({ projectId, onUploadComplete }: FileUploadProps) {
         // For simplicity, we'll just upload one file at a time
         const file = files[0];
 
-        const uploadedFile = await uploadFile(projectId, file);
+        const uploadedFile = await uploadFile(projectId, file, token);
         onUploadComplete(uploadedFile);
       } catch (err) {
         setError('Failed to upload file. Please try again.');
@@ -43,7 +48,7 @@ export function FileUpload({ projectId, onUploadComplete }: FileUploadProps) {
         setIsUploading(false);
       }
     },
-    [projectId, onUploadComplete],
+    [projectId, token, onUploadComplete],
   );
 
   const handleDrop = useCallback(

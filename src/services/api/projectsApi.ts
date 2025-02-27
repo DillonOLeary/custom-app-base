@@ -29,8 +29,11 @@ export async function createProject(
 /**
  * Get project details by ID
  */
-export async function getProjectDetails(projectId: string): Promise<Project> {
-  return await get<Project>(`/api/projects/${projectId}`);
+export async function getProjectDetails(
+  projectId: string,
+  token?: string,
+): Promise<Project> {
+  return await get<Project>(`/api/projects/${projectId}`, token);
 }
 
 /**
@@ -47,8 +50,9 @@ export async function getProjectAnalysis(
  */
 export async function getProjectFiles(
   projectId: string,
+  token?: string,
 ): Promise<FileUpload[]> {
-  return await get<FileUpload[]>(`/api/projects/${projectId}/files`);
+  return await get<FileUpload[]>(`/api/projects/${projectId}/files`, token);
 }
 
 /**
@@ -57,6 +61,7 @@ export async function getProjectFiles(
 export async function uploadFile(
   projectId: string,
   file: File,
+  token?: string,
 ): Promise<FileUpload> {
   const formData = new FormData();
   formData.append('file', file);
@@ -64,10 +69,11 @@ export async function uploadFile(
   const newFile = await postFormData<FileUpload>(
     `/api/projects/${projectId}/files`,
     formData,
+    token,
   );
 
   // Simulate file processing and status change (this would be handled by real backend)
-  simulateFileProcessing(projectId, newFile.id);
+  simulateFileProcessing(projectId, newFile.id, token);
 
   return newFile;
 }
@@ -79,30 +85,43 @@ export async function updateFileStatus(
   projectId: string,
   fileId: string,
   status: FileUpload['status'],
+  token?: string,
 ): Promise<{ id: string; status: string; updatedAt: string }> {
   return await put<{ id: string; status: string; updatedAt: string }>(
     `/api/projects/${projectId}/files/${fileId}/status`,
     { status },
+    token,
   );
 }
 
 /**
  * Run analysis for a project
  */
-export async function runAnalysis(projectId: string): Promise<AnalysisResult> {
-  return await post<AnalysisResult>(`/api/projects/${projectId}/analyze`);
+export async function runAnalysis(
+  projectId: string,
+  token?: string,
+): Promise<AnalysisResult> {
+  return await post<AnalysisResult>(
+    `/api/projects/${projectId}/analyze`,
+    undefined,
+    token,
+  );
 }
 
 /**
  * Helper function to simulate file processing
  */
-function simulateFileProcessing(projectId: string, fileId: string) {
+function simulateFileProcessing(
+  projectId: string,
+  fileId: string,
+  token?: string,
+) {
   // Wait 3-5 seconds before changing status to completed
   const processingTime = 3000 + Math.random() * 2000;
 
   setTimeout(async () => {
     try {
-      await updateFileStatus(projectId, fileId, 'completed');
+      await updateFileStatus(projectId, fileId, 'completed', token);
       console.log(`File ${fileId} processing completed`);
     } catch (error) {
       console.error('Error updating file status:', error);

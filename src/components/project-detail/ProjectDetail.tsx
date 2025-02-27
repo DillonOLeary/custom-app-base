@@ -20,9 +20,10 @@ import { processFilesForProject } from '@/utils/fileUtils';
 
 interface ProjectDetailProps {
   projectId: string;
+  token?: string;
 }
 
-export function ProjectDetail({ projectId }: ProjectDetailProps) {
+export function ProjectDetail({ projectId, token }: ProjectDetailProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     setError(null);
 
     try {
-      const projectData = await getProjectDetails(projectId);
+      const projectData = await getProjectDetails(projectId, token);
       setProject(projectData);
     } catch (err) {
       console.error('Error fetching project details:', err);
@@ -45,7 +46,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, token]);
 
   // Extract file processing logic to reduce duplication
   const processFiles = useCallback(
@@ -82,7 +83,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     }
 
     try {
-      const filesData = await getProjectFiles(projectId);
+      const filesData = await getProjectFiles(projectId, token);
 
       // First set the files array to avoid flickering
       setFiles(filesData);
@@ -95,7 +96,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     } finally {
       setIsLoadingFiles(false);
     }
-  }, [projectId, files.length, processFiles]);
+  }, [projectId, token, files.length, processFiles]);
 
   // Use separate useEffects to avoid flickering - first load project, then files
   useEffect(() => {
@@ -233,7 +234,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
                   return;
                 }
                 setIsLoading(true);
-                await runAnalysis(projectId);
+                await runAnalysis(projectId, token);
                 await fetchProjectDetails();
               } catch (err) {
                 console.error('Error running analysis:', err);
@@ -248,6 +249,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
         {/* File Upload always comes next (either after analysis results or pending message) */}
         <FileUpload
           projectId={projectId}
+          token={token}
           onUploadComplete={handleUploadComplete}
         />
 

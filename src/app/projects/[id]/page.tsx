@@ -3,6 +3,8 @@ import { Project } from '@/types/project';
 import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
 import { Container } from '@/components/common/Container';
 import { TokenGate } from '@/components/common/TokenGate';
+import { copilotApi } from 'copilot-node-sdk';
+import type { SearchParams } from '@/app/search-params';
 
 export const metadata: Metadata = {
   title: 'Project Details | CEART',
@@ -11,21 +13,48 @@ export const metadata: Metadata = {
 
 type ProjectPageProps = {
   params: { id: string };
-  searchParams: { token?: string };
+  searchParams: SearchParams;
 };
+
+async function Content({
+  projectId,
+  token,
+}: {
+  projectId: string;
+  token?: string;
+}) {
+  // Setup Copilot API client
+  const copilot = copilotApi({
+    apiKey: process.env.COPILOT_API_KEY ?? '',
+    token: typeof token === 'string' ? token : undefined,
+  });
+
+  // These API calls are kept for session validation
+  await copilot.retrieveWorkspace();
+  await copilot.getTokenPayload?.();
+
+  return (
+    <Container>
+      {/* Use key to ensure component fully re-mounts when project ID changes */}
+      <ProjectDetail
+        key={`project-detail-${projectId}`}
+        projectId={projectId}
+        token={token}
+      />
+    </Container>
+  );
+}
 
 export default function ProjectPage({
   params,
   searchParams,
 }: ProjectPageProps) {
   const { id } = params;
+  const { token } = searchParams;
 
   return (
     <TokenGate searchParams={searchParams}>
-      <Container>
-        {/* Use key to ensure component fully re-mounts when project ID changes */}
-        <ProjectDetail key={`project-detail-${id}`} projectId={id} />
-      </Container>
+      <Content projectId={id} token={token} />
     </TokenGate>
   );
 }
