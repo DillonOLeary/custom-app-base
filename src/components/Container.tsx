@@ -1,4 +1,4 @@
-const GUTTERS_CLASSNAME = 'px-5 md:px-9 py-16';
+const GUTTERS_CLASSNAME = 'px-5 md:px-9';
 
 /**
  * The container component is a good wrapper that matches the

@@ -63,38 +63,30 @@ export function ProjectsDashboard() {
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
+    
+    // If the query is empty, just filter the existing projects without making API call
+    if (query.trim() === '') {
+      setFilteredProjects(projects);
+      return;
+    }
+    
+    // Only search API for non-empty queries
     setIsLoading(true);
     setError(null);
     
     try {
-      if (query.trim() === '') {
-        // If query is empty, reset to all projects
-        const response = await fetch('/api/projects');
-        
-        if (!response.ok) {
-          const errorMessage = `Failed to fetch projects: ${response.status} ${response.statusText || ''}`;
-          console.error(errorMessage);
-          setError(errorMessage);
-          return;
-        }
-        
-        const data = await response.json();
-        setProjects(data);
-        setFilteredProjects(data);
-      } else {
-        // If there's a query, search for matching projects
-        const response = await fetch(`/api/projects/search?q=${encodeURIComponent(query)}`);
-        
-        if (!response.ok) {
-          const errorMessage = `Search failed: ${response.status} ${response.statusText || ''}`;
-          console.error(errorMessage);
-          setError(errorMessage);
-          return;
-        }
-        
-        const data = await response.json();
-        setFilteredProjects(data);
+      // Search for matching projects
+      const response = await fetch(`/api/projects/search?q=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        const errorMessage = `Search failed: ${response.status} ${response.statusText || ''}`;
+        console.error(errorMessage);
+        setError(errorMessage);
+        return;
       }
+      
+      const data = await response.json();
+      setFilteredProjects(data);
     } catch (err) {
       // Handle any unexpected errors
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
@@ -137,23 +129,32 @@ export function ProjectsDashboard() {
   };
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pb-4 border-b-2 border-[--color-bg-1]">
-        <div className="flex items-center">
-          <div className="w-1 h-6 bg-[--color-primary] rounded mr-2"></div>
-          <h2 className="heading-primary heading-2 text-[--color-text-dark]">YOUR PROJECTS</h2>
-        </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          <SearchBar onSearch={handleSearch} />
-          <CreateProjectButton onProjectCreate={handleCreateProject} />
+    <div className="relative w-full min-h-screen">
+      {/* Fixed position header with z-index to ensure it stays on top */}
+      <div 
+        className="fixed top-0 left-0 right-0 bg-white z-10 border-b-2 border-[--color-bg-1]"
+        style={{ height: '120px' }}
+      >
+        <div className="h-full flex flex-col md:flex-row md:justify-between md:items-center px-5 md:px-9 pt-6">
+          <div className="flex items-center">
+            <div className="w-1 h-6 bg-[--color-primary] rounded mr-2"></div>
+            <h2 className="heading-primary heading-2 text-[--color-text-dark]">YOUR PROJECTS</h2>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <SearchBar onSearch={handleSearch} />
+            <CreateProjectButton onProjectCreate={handleCreateProject} />
+          </div>
         </div>
       </div>
       
-      <ProjectList
-        projects={filteredProjects}
-        isLoading={isLoading}
-        error={error || undefined}
-      />
+      {/* Content section with padding top to account for fixed header */}
+      <div className="w-full pt-[150px] px-5 md:px-9">
+        <ProjectList
+          projects={filteredProjects}
+          isLoading={isLoading}
+          error={error || undefined}
+        />
+      </div>
     </div>
   );
 }

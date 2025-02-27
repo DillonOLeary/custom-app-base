@@ -40,7 +40,7 @@ describe('ScoreOverview', () => {
     }
   });
 
-  test('calls onCategoryClick when a category is clicked', () => {
+  test('expands category when clicked', () => {
     render(
       <ScoreOverview 
         analysisResult={mockProject.analysisResult!} 
@@ -48,10 +48,51 @@ describe('ScoreOverview', () => {
       />
     );
     
-    // Check that clicking a category calls the callback
+    // Before clicking, no expanded content should be visible
+    const categoryInfo = CATEGORY_DESCRIPTIONS['completeness'];
+    expect(screen.queryByText(categoryInfo.description)).not.toBeInTheDocument();
+    
+    // Click to expand
     const categoryButton = screen.getByTestId('category-completeness');
     fireEvent.click(categoryButton);
     
-    expect(mockOnCategoryClick).toHaveBeenCalledWith('completeness');
+    // After clicking, description should be visible
+    expect(screen.getByText(categoryInfo.description)).toBeInTheDocument();
+    
+    // Red flags from this category should be visible
+    const redFlags = mockProject.analysisResult!.categoryScores.find(
+      c => c.category === 'completeness'
+    )!.redFlags;
+    
+    expect(screen.getByText('IDENTIFIED ISSUES')).toBeInTheDocument();
+    expect(screen.getByText(redFlags[0].title)).toBeInTheDocument();
+    expect(screen.getByText(redFlags[0].description)).toBeInTheDocument();
+    
+    // Click again to collapse
+    fireEvent.click(categoryButton);
+    
+    // Category content should no longer be visible
+    expect(screen.queryByText(categoryInfo.description)).not.toBeInTheDocument();
+  });
+  
+  test('shows "No issues" message for categories with no red flags', () => {
+    render(
+      <ScoreOverview 
+        analysisResult={mockProject.analysisResult!} 
+        onCategoryClick={mockOnCategoryClick} 
+      />
+    );
+    
+    // Find the category with no red flags
+    const perfectCategory = mockProject.analysisResult!.categoryScores.find(
+      c => c.redFlags.length === 0
+    )!;
+    
+    // Click to expand
+    const categoryButton = screen.getByTestId(`category-${perfectCategory.category}`);
+    fireEvent.click(categoryButton);
+    
+    // Should show "no issues" message
+    expect(screen.getByText('No issues found in this category. Great job!')).toBeInTheDocument();
   });
 });

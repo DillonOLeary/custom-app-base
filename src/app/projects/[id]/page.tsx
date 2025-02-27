@@ -20,7 +20,8 @@ export default function ProjectPage({ params, searchParams }: ProjectPageProps) 
   return (
     <TokenGate searchParams={searchParams}>
       <Container>
-        <ProjectDetail projectId={id} />
+        {/* Use key to ensure component fully re-mounts when project ID changes */}
+        <ProjectDetail key={`project-detail-${id}`} projectId={id} />
       </Container>
     </TokenGate>
   );

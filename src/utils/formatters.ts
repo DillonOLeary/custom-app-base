@@ -66,3 +66,60 @@ export function timeAgo(dateString: string): string {
   
   return seconds < 10 ? 'just now' : `${Math.floor(seconds)} seconds ago`;
 }
+
+// Format a number with commas for thousands separator
+export function formatNumber(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// Format a path for display, ensuring it has a trailing slash
+export function formatPath(path: string): string {
+  if (!path.endsWith('/')) {
+    return `${path}/`;
+  }
+  return path;
+}
+
+// Format impact level with proper capitalization
+export function formatImpact(impact: 'high' | 'medium' | 'low'): string {
+  return impact.charAt(0).toUpperCase() + impact.slice(1);
+}
+
+// Get file extension from filename
+export function getFileExtension(filename: string): string {
+  return filename.split('.').pop()?.toLowerCase() || '';
+}
+
+// Get file type from extension
+export function getFileType(filename: string): string {
+  const extension = getFileExtension(filename);
+  
+  switch (extension) {
+    case 'pdf':
+      return 'PDF Document';
+    case 'doc':
+    case 'docx':
+      return 'Word Document';
+    case 'xls':
+    case 'xlsx':
+      return 'Excel Spreadsheet';
+    case 'ppt':
+    case 'pptx':
+      return 'PowerPoint Presentation';
+    case 'txt':
+      return 'Text Document';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+      return 'Image';
+    case 'zip':
+    case 'rar':
+      return 'Archive';
+    case 'dwg':
+    case 'dxf':
+      return 'CAD Drawing';
+    default:
+      return 'File';
+  }
+}

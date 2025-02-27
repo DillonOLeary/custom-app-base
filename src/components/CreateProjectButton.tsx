@@ -60,7 +60,7 @@ export function CreateProjectButton({ onProjectCreate }: CreateProjectButtonProp
     <>
       <button
         onClick={openModal}
-        className="ceart-button ceart-button-primary"
+        className="ceart-button ceart-button-primary h-12 px-6 whitespace-nowrap"
         data-testid="create-project-button"
       >
         Create New Project

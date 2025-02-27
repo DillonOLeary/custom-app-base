@@ -68,6 +68,7 @@ export const getMockProjects = (): Project[] => [
     createdAt: '2023-08-15T10:30:00Z',
     updatedAt: '2023-09-02T14:45:00Z',
     score: 87,
+    description: 'A large utility-scale solar project with high CEARTscore and all documentation complete.'
   },
   {
     id: '2',
@@ -78,6 +79,7 @@ export const getMockProjects = (): Project[] => [
     status: 'analyzing',
     createdAt: '2023-10-05T08:20:00Z',
     updatedAt: '2023-10-05T08:20:00Z',
+    description: 'Offshore wind farm with analysis currently in progress. Documents uploaded.'
   },
   {
     id: '3',
@@ -88,6 +90,7 @@ export const getMockProjects = (): Project[] => [
     status: 'pending',
     createdAt: '2023-10-10T11:15:00Z',
     updatedAt: '2023-10-10T11:15:00Z',
+    description: 'Run-of-river hydro project with documents uploaded awaiting analysis.'
   },
   {
     id: '4',
@@ -99,6 +102,7 @@ export const getMockProjects = (): Project[] => [
     createdAt: '2023-07-22T09:10:00Z',
     updatedAt: '2023-08-30T16:40:00Z',
     score: 92,
+    description: 'Geothermal project with excellent CEARTscore and complete documentation.'
   },
   {
     id: '5',
@@ -109,6 +113,17 @@ export const getMockProjects = (): Project[] => [
     status: 'failed',
     createdAt: '2023-09-18T13:25:00Z',
     updatedAt: '2023-09-25T17:30:00Z',
-    score: 45,
+    description: 'Biomass project with uploaded documents but analysis failed due to incomplete documentation.'
+  },
+  {
+    id: '6',
+    name: 'New Solar Development',
+    location: 'Nevada, USA',
+    type: 'solar',
+    capacity: 55,
+    status: 'new',
+    createdAt: '2023-10-24T09:00:00Z',
+    updatedAt: '2023-10-24T09:00:00Z',
+    description: 'New project just created. No documents uploaded yet.'
   },
 ];

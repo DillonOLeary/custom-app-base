@@ -1,4 +1,5 @@
 import { AnalysisResult, FileUpload, Project } from '@/types/project';
+import { mockProject } from '../../__tests__/support/testUtils';
 
 // Fetch project details
 export async function getProjectDetails(projectId: string): Promise<Project> {
@@ -97,6 +98,27 @@ export async function updateFileStatus(
     return await response.json();
   } catch (error) {
     console.error('Error updating file status:', error);
+    throw error;
+  }
+}
+
+// Run analysis on all project files
+export async function runAnalysis(projectId: string): Promise<AnalysisResult> {
+  try {
+    const response = await fetch(`/api/projects/${projectId}/analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to run analysis: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error running analysis:', error);
     throw error;
   }
 }

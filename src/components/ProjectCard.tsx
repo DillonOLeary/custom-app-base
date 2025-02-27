@@ -9,6 +9,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   // Status indicator colors using CEART brand colors
   const statusColors = {
+    new: 'bg-[--color-bg-2] text-[--color-text-light]',
     pending: 'bg-[--color-tertiary-3] text-[--color-neutral-5]',
     analyzing: 'bg-[--color-tertiary-1] text-[--color-neutral-3]',
     completed: 'bg-[--color-tertiary-2] text-[--color-neutral-4]',
@@ -57,7 +58,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </div>
       
       <div className="mt-auto pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-        <span className="text-3 text-[--color-bg-3]">Created: {formatDate(project.createdAt)}</span>
+        <div className="flex flex-col">
+          <span className="text-3 text-[--color-bg-3]">Created: {formatDate(project.createdAt)}</span>
+          {project.description && (
+            <span className="text-3 text-[--color-bg-3] line-clamp-1 max-w-[220px]">{project.description}</span>
+          )}
+        </div>
         
         {project.score !== undefined && (
           <div className="flex items-center">

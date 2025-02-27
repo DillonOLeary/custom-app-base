@@ -11,7 +11,7 @@ interface ProjectListProps {
 export function ProjectList({ projects, isLoading = false, error }: ProjectListProps) {
   if (isLoading) {
     return (
-      <div className="mt-6 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" data-testid="project-list-loading">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[300px]" data-testid="project-list-loading">
         {[...Array(6)].map((_, index) => (
           <div
             key={index}
@@ -35,7 +35,7 @@ export function ProjectList({ projects, isLoading = false, error }: ProjectListP
 
   if (error) {
     return (
-      <div className="mt-6 p-4 border-2 border-[--color-secondary] bg-[#FFF0EE] rounded-lg text-[--color-secondary]" data-testid="project-list-error">
+      <div className="p-4 border-2 border-[--color-secondary] bg-[#FFF0EE] rounded-lg text-[--color-secondary] min-h-[300px] flex items-center justify-center" data-testid="project-list-error">
         <p className="heading-secondary text-2">Error loading projects: {error}</p>
       </div>
     );
@@ -43,7 +43,7 @@ export function ProjectList({ projects, isLoading = false, error }: ProjectListP
 
   if (projects.length === 0) {
     return (
-      <div className="mt-6 p-6 border-2 border-[--color-neutral-1] rounded-lg bg-white text-center" data-testid="project-list-empty">
+      <div className="p-6 border-2 border-[--color-neutral-1] rounded-lg bg-white text-center min-h-[300px] flex flex-col items-center justify-center" data-testid="project-list-empty">
         <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[--color-bg-1] flex items-center justify-center">
           <span className="text-2xl">📊</span>
         </div>
@@ -53,7 +53,7 @@ export function ProjectList({ projects, isLoading = false, error }: ProjectListP
   }
 
   return (
-    <div className="mt-6 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" data-testid="project-list">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[300px]" data-testid="project-list">
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}

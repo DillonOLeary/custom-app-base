@@ -12,6 +12,9 @@ export interface RedFlag {
   description: string;
   impact: 'high' | 'medium' | 'low';
   pointsDeducted: number;
+  missingFiles?: string[]; // Descriptions of missing files or folders
+  relatedFiles?: string[]; // IDs of files that have issues
+  recommendedAction?: string; // Suggested action to resolve the issue
 }
 
 export interface CategoryScore {
@@ -35,6 +38,21 @@ export interface FileUpload {
   uploadDate: string;
   status: 'uploaded' | 'processing' | 'completed' | 'failed';
   errorMessage?: string;
+  path?: string; // File path within the data room structure (e.g., "Site Control/Leases/")
+  fileType?: string; // Document type (e.g., "lease", "permit", "design")
+  relatedRedFlags?: string[]; // IDs of related red flags
+  isHighlighted?: boolean; // Flag for missing or problematic files
+  downloadUrl?: string; // URL to download the file
+}
+
+export interface Folder {
+  id: string;
+  name: string;
+  path: string; // Full path to this folder, e.g., "Site Control/Leases/"
+  files: FileUpload[];
+  subfolders: Folder[];
+  isExpanded?: boolean; // UI state for folder expansion
+  missingRecommendedFiles?: string[]; // List of recommended files that are missing
 }
 
 export interface Project {
@@ -43,10 +61,13 @@ export interface Project {
   location: string;
   type: 'solar' | 'wind' | 'hydro' | 'geothermal' | 'biomass' | 'other';
   capacity: number; // in MW
-  status: 'pending' | 'analyzing' | 'completed' | 'failed';
+  status: 'new' | 'pending' | 'analyzing' | 'completed' | 'failed';
   createdAt: string;
   updatedAt: string;
   score?: number; // 0-100 score representing data room quality
   analysisResult?: AnalysisResult;
-  files?: FileUpload[];
+  files?: FileUpload[]; // Flat list of all files
+  folders?: Folder[]; // Root folders in the data room
+  description?: string;
+  analysisError?: string; // Error message when analysis fails
 }

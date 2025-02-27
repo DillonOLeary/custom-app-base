@@ -157,48 +157,186 @@ const generateAnalysisResult = (projectId: string): AnalysisResult => {
   };
 };
 
-// Generate mock files for a project
+// Generate mock files for a project with folder structure
 const generateMockFiles = (projectId: string): FileUpload[] => {
   return [
+    // Financial folder
     {
       id: `${projectId}-file1`,
       fileName: 'Financial_Projections_2023.xlsx',
       fileSize: 2_450_000,
       uploadDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'completed'
+      status: 'completed',
+      path: 'Financial/Models',
+      fileType: 'financial',
+      downloadUrl: `${projectId}/files/financial-projections`
     },
     {
       id: `${projectId}-file2`,
+      fileName: 'Tax_Equity_Model.xlsx',
+      fileSize: 1_850_000,
+      uploadDate: new Date(Date.now() - 6.5 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Financial/Tax Equity',
+      fileType: 'financial',
+      downloadUrl: `${projectId}/files/tax-equity`
+    },
+    
+    // Environmental folder
+    {
+      id: `${projectId}-file3`,
       fileName: 'Environmental_Impact_Assessment.pdf',
       fileSize: 8_750_000,
       uploadDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'completed'
-    },
-    {
-      id: `${projectId}-file3`,
-      fileName: 'Power_Purchase_Agreement.pdf',
-      fileSize: 3_200_000,
-      uploadDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'completed'
+      status: 'completed',
+      path: 'Environmental/Reports',
+      fileType: 'environmental',
+      isHighlighted: true, // Example of highlighted file with issues
+      downloadUrl: `${projectId}/files/environmental-assessment`
     },
     {
       id: `${projectId}-file4`,
+      fileName: 'Wetlands_Delineation.pdf',
+      fileSize: 5_100_000,
+      uploadDate: new Date(Date.now() - 5.5 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Environmental/Wetlands',
+      fileType: 'environmental',
+      downloadUrl: `${projectId}/files/wetlands`
+    },
+    
+    // Site Control folder
+    {
+      id: `${projectId}-file5`,
       fileName: 'Land_Lease_Agreement.pdf',
       fileSize: 4_100_000,
       uploadDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'completed'
+      status: 'completed',
+      path: 'Site Control/Leases',
+      fileType: 'legal',
+      downloadUrl: `${projectId}/files/lease`
     },
     {
-      id: `${projectId}-file5`,
+      id: `${projectId}-file6`,
+      fileName: 'Title_Report.pdf',
+      fileSize: 3_200_000,
+      uploadDate: new Date(Date.now() - 3.5 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Site Control/Title',
+      fileType: 'legal',
+      downloadUrl: `${projectId}/files/title`
+    },
+    
+    // Design folder
+    {
+      id: `${projectId}-file7`,
+      fileName: 'PVSyst_Report.pdf',
+      fileSize: 7_600_000,
+      uploadDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Design/PVSyst',
+      fileType: 'design',
+      downloadUrl: `${projectId}/files/pvsyst`
+    },
+    {
+      id: `${projectId}-file8`,
+      fileName: 'Site_Layout.dwg',
+      fileSize: 9_800_000,
+      uploadDate: new Date(Date.now() - 4.5 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Design/Layout',
+      fileType: 'design',
+      downloadUrl: `${projectId}/files/layout`
+    },
+    {
+      id: `${projectId}-file9`,
       fileName: 'Equipment_Specifications.pdf',
       fileSize: 12_300_000,
       uploadDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'completed'
+      status: 'completed',
+      path: 'Design/Equipment',
+      fileType: 'design',
+      downloadUrl: `${projectId}/files/equipment`
+    },
+    
+    // Interconnection folder
+    {
+      id: `${projectId}-file10`,
+      fileName: 'Interconnection_Agreement.pdf',
+      fileSize: 3_500_000,
+      uploadDate: new Date(Date.now() - 4.7 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      path: 'Interconnection/Agreements',
+      fileType: 'interconnection',
+      downloadUrl: `${projectId}/files/interconnection`
+    },
+    
+    // File with no path (root level)
+    {
+      id: `${projectId}-file11`,
+      fileName: 'Power_Purchase_Agreement.pdf',
+      fileSize: 3_200_000,
+      uploadDate: new Date(Date.now() - 5.2 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'completed',
+      fileType: 'legal',
+      downloadUrl: `${projectId}/files/ppa`
+    },
+    
+    // File that's still processing
+    {
+      id: `${projectId}-file12`,
+      fileName: 'Geotechnical_Report.pdf',
+      fileSize: 14_500_000,
+      uploadDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'processing',
+      path: 'Reports/Geotechnical',
+      fileType: 'report'
     }
   ];
 };
 
 // Extend base projects with detailed analysis data
+// Update red flags to include missing files and related files
+const enhanceRedFlagsWithFileInfo = (
+  redFlags: RedFlag[], 
+  projectId: string
+): RedFlag[] => {
+  return redFlags.map(flag => {
+    switch (flag.id) {
+      case `${projectId}-c1`:
+        // Missing environmental assessment
+        return {
+          ...flag,
+          missingFiles: ['Environmental/Permits/Air Quality Permit.pdf'],
+          recommendedAction: 'Complete and upload environmental impact assessment with air quality permit'
+        };
+      case `${projectId}-c2`:
+        // Incomplete land survey documentation
+        return {
+          ...flag,
+          relatedFiles: [`${projectId}-file5`], // Land Lease Agreement has issues
+          recommendedAction: 'Update land survey with complete boundary definitions'
+        };
+      case `${projectId}-f1`:
+        // Unrealistic revenue projections
+        return {
+          ...flag,
+          relatedFiles: [`${projectId}-file1`], // Financial projections file has issues
+          recommendedAction: 'Revise financial model with more conservative assumptions'
+        };
+      case `${projectId}-cc1`:
+        // Missing interconnection agreement
+        return {
+          ...flag,
+          missingFiles: ['Interconnection/Studies/Feasibility Study.pdf'],
+          recommendedAction: 'Obtain and upload the grid interconnection feasibility study'
+        };
+      default:
+        return flag;
+    }
+  });
+};
+
 export const getMockProjectDetails = (projectId: string): Project | undefined => {
   const baseProjects = getMockProjects();
   const project = baseProjects.find(p => p.id === projectId);
@@ -207,18 +345,97 @@ export const getMockProjectDetails = (projectId: string): Project | undefined =>
     return undefined;
   }
 
-  // Only generate analysis results for completed projects
-  if (project.status === 'completed') {
-    return {
-      ...project,
-      analysisResult: generateAnalysisResult(project.id),
-      files: generateMockFiles(project.id)
-    };
+  // Based on project status, return appropriate data
+  switch (project.status) {
+    case 'completed': {
+      // Completed projects have full analysis and files
+      const files = generateMockFiles(project.id);
+      const analysisResult = generateAnalysisResult(project.id);
+      
+      // Enhance red flags with file information
+      analysisResult.categoryScores.forEach(category => {
+        category.redFlags = enhanceRedFlagsWithFileInfo(category.redFlags, project.id);
+      });
+      
+      // Import file utils
+      const { processFilesForProject } = require('../utils/fileUtils');
+      
+      // Process files to get folder structure
+      const { folders, rootFiles } = processFilesForProject(
+        files, 
+        analysisResult.categoryScores.flatMap(cat => cat.redFlags)
+      );
+      
+      return {
+        ...project,
+        analysisResult,
+        files,
+        folders,
+        rootFiles
+      };
+    }
+      
+    case 'analyzing': {
+      // Analyzing projects have files but analysis is in progress
+      const files = generateMockFiles(project.id);
+      
+      // Import file utils
+      const { processFilesForProject } = require('../utils/fileUtils');
+      
+      // Process files to get folder structure without red flags
+      const { folders, rootFiles } = processFilesForProject(files);
+      
+      return {
+        ...project,
+        files,
+        folders,
+        rootFiles
+      };
+    }
+      
+    case 'pending': {
+      // Pending projects have files uploaded but no analysis started yet
+      const files = generateMockFiles(project.id);
+      
+      // Import file utils
+      const { processFilesForProject } = require('../utils/fileUtils');
+      
+      // Process files to get folder structure without red flags
+      const { folders, rootFiles } = processFilesForProject(files);
+      
+      return {
+        ...project,
+        files,
+        folders,
+        rootFiles
+      };
+    }
+      
+    case 'failed': {
+      // Failed projects have files but analysis failed
+      const files = generateMockFiles(project.id);
+      
+      // Import file utils
+      const { processFilesForProject } = require('../utils/fileUtils');
+      
+      // Process files to get folder structure without red flags
+      const { folders, rootFiles } = processFilesForProject(files);
+      
+      return {
+        ...project,
+        files,
+        folders,
+        rootFiles,
+        analysisError: "Analysis failed due to incomplete financial documentation and missing permit information"
+      };
+    }
+      
+    default: {
+      // New projects with no uploads yet
+      return {
+        ...project,
+        files: []
+      };
+    }
   }
-
-  // For projects not yet completed, just add empty files array
-  return {
-    ...project,
-    files: []
-  };
 };
