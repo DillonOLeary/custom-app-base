@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '@/utils/api-auth';
 
+// This prevents this route from being pre-rendered during build time
+export const dynamic = 'force-dynamic';
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string; fileId: string } },

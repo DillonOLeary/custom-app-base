@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getMockProjectDetails } from '@/mocks/projectDetails';
 import { validateToken } from '@/utils/api-auth';
 
+// This prevents this route from being pre-rendered during build time
+export const dynamic = 'force-dynamic';
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } },

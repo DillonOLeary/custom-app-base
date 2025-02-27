@@ -18,12 +18,10 @@ export async function validateToken(
         nextUrl?: { searchParams: { get: (key: string) => string | null } };
       },
 ) {
-  // Skip token validation in development/local environment or in production deployment
-  // This avoids breaking changes when deployed to Vercel
+  // Skip token validation in development/local environment
   if (
     process.env.COPILOT_ENV === 'local' ||
-    process.env.NODE_ENV === 'development' ||
-    process.env.VERCEL === '1'
+    process.env.NODE_ENV === 'development'
   ) {
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',

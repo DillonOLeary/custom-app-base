@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { validateToken } from '@/utils/api-auth';
 import { cleanupRateLimitStore } from '@/utils/token-validation';
 
+// This prevents this route from being pre-rendered during build time
+export const dynamic = 'force-dynamic';
+
 // In a real implementation, this would use secure environment variables
 const DROPBOX_API_KEY = process.env.DROPBOX_API_KEY || 'mock-dropbox-api-key';
 
