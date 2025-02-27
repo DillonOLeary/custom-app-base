@@ -34,10 +34,14 @@ test.describe('CEARTscore consistency and folder structure tests', () => {
     await expect(page.getByText('DESERT SUN SOLAR FARM')).toBeVisible();
 
     // Check the score in the project header
-    const headerScoreElement = page
-      .getByText('CEARTscore:')
-      .first()
-      .getByTestId('score-value');
+    // The header contains CEARTscore: and then an element with the score
+    await expect(page.getByText('CEARTscore:')).toBeVisible();
+
+    // Wait a bit for the score to be visible
+    await page.waitForTimeout(1000);
+
+    // Look for the score directly using the data-testid
+    const headerScoreElement = page.getByTestId('score-value').first();
     await expect(headerScoreElement).toBeVisible();
 
     // Extract the score from the project details
@@ -86,10 +90,14 @@ test.describe('CEARTscore consistency and folder structure tests', () => {
     await expect(page.getByText('GEOTHERMAL SPRINGS PLANT')).toBeVisible();
 
     // Check the score in the project header
-    const headerScoreElement = page
-      .getByText('CEARTscore:')
-      .first()
-      .getByTestId('score-value');
+    // The header contains CEARTscore: and then an element with the score
+    await expect(page.getByText('CEARTscore:')).toBeVisible();
+
+    // Wait a bit for the score to be visible
+    await page.waitForTimeout(1000);
+
+    // Look for the score directly using the data-testid
+    const headerScoreElement = page.getByTestId('score-value').first();
     await expect(headerScoreElement).toBeVisible();
 
     // Extract the score from the project details

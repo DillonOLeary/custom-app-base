@@ -15,7 +15,12 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   // Set the test directory pattern to use __tests__ folder
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/__tests__/support/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/.next/',
+    '/__tests__/support/',
+    '/e2e/',
+  ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
