@@ -1,5 +1,13 @@
 import { validateAndExtractTokenClaims } from '@/utils/token-validation';
 import { copilotApi } from 'copilot-node-sdk';
+import * as environmentUtils from '@/utils/environment';
+
+// Override shouldSkipSDKValidation to return false in these tests
+// so that we can properly test validation logic
+jest.mock('@/utils/environment', () => ({
+  shouldSkipSDKValidation: jest.fn().mockReturnValue(false),
+  isTestOrCIEnvironment: jest.fn().mockReturnValue(false),
+}));
 
 // Mock copilotApi
 jest.mock('copilot-node-sdk', () => ({
