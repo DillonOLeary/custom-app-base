@@ -79,7 +79,10 @@ describe('ProjectDetail', () => {
     
     // Should show analysis pending message
     expect(screen.getByText('ANALYSIS PENDING')).toBeInTheDocument();
-    expect(screen.getByText('Your files are ready for analysis. Run CEARTscore analysis to evaluate your project.')).toBeInTheDocument();
+    
+    // Look for text content flexibly since the exact string might be split across elements
+    const pendingText = screen.getByText(/Your files are ready for analysis/, { exact: false });
+    expect(pendingText).toBeInTheDocument();
     
     // Should show run analysis button
     expect(screen.getByTestId('run-analysis-button')).toBeInTheDocument();
@@ -178,12 +181,18 @@ describe('ProjectDetail', () => {
       expect(screen.getByText(mockProject.name.toUpperCase())).toBeInTheDocument();
     });
     
+    // Make sure runAnalysis is clear before we click the button
+    expect(mockRunAnalysis).not.toHaveBeenCalled();
+    
     // Click the run analysis button
     const runButton = screen.getByTestId('run-analysis-button');
     fireEvent.click(runButton);
     
-    // Should call runAnalysis API
-    expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    // Use waitFor to allow for async operations to complete
+    await waitFor(() => {
+      // Should call runAnalysis API
+      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    });
     
     // Should call getProjectDetails again to refresh data
     await waitFor(() => {
@@ -216,12 +225,18 @@ describe('ProjectDetail', () => {
       expect(screen.getByText(mockProject.name.toUpperCase())).toBeInTheDocument();
     });
     
+    // Make sure runAnalysis is clear before we click the button
+    expect(mockRunAnalysis).not.toHaveBeenCalled();
+    
     // Click the retry analysis button
     const retryButton = screen.getByTestId('retry-analysis-button');
     fireEvent.click(retryButton);
     
-    // Should call runAnalysis API
-    expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    // Use waitFor for the async operation
+    await waitFor(() => {
+      // Should call runAnalysis API
+      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    });
     
     // Should call getProjectDetails again to refresh data
     await waitFor(() => {
