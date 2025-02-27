@@ -1,0 +1,10 @@
+# These owners will be the default owners for everything in the repo
+# and will be requested for review when someone opens a pull request.
+* @DillonOLeary
+
+# Dependency updates are often automated, so let's make sure to review them
+package.json @DillonOLeary
+yarn.lock @DillonOLeary
+
+# CI/CD configuration should have special attention
+.github/* @DillonOLeary

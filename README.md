@@ -58,11 +58,13 @@ The Content Security Policy in the custom app base should be configured in `src/
 This repository uses GitHub Actions for CI/CD with a sequential workflow pipeline:
 
 1. **Parallel Validation** (runs simultaneously):
+
    - **Linting**: Ensures code adheres to ESLint rules
    - **Type Checking**: Validates TypeScript types
    - **Format Checking**: Verifies code formatting with Prettier
 
 2. **Testing** (runs after validation passes):
+
    - Runs Jest tests to verify application behavior
 
 3. **Build Verification** (runs after tests pass):
@@ -91,3 +93,17 @@ yarn build
 # Format code (fixes formatting issues)
 yarn format
 ```
+
+### Dependency Management
+
+This repository uses Dependabot to automatically keep dependencies up to date:
+
+- **Weekly Updates**: Dependabot checks for npm dependency updates every Monday
+- **Security Patches**: Security updates are prioritized
+- **Grouped Updates**: Minor and patch updates are grouped into single PRs
+- **GitHub Actions**: GitHub Actions workflows are also kept up to date (monthly)
+
+Additionally, Renovate Bot is configured as an alternative:
+
+- **Weekend Updates**: Renovate is configured to run on weekends
+- **Automerge**: Minor/patch updates and dev dependencies can be automatically merged
