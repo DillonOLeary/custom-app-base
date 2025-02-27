@@ -113,9 +113,18 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
     if (!window.process.env) {
       window.process.env = {};
     }
+    
+    // Set all test environment variables 
     window.process.env.NODE_ENV = 'test';
     window.process.env.NEXT_PUBLIC_TEST_MODE = 'true';
+    window.process.env.COPILOT_ENV = 'local';
+    window.process.env.CI = 'true';
     
+    // Set window-level test flags
+    window.__TEST_MODE__ = true;
+    window.__COPILOT_ENV__ = 'local';
+    
+    console.log('[Mock] Test environment variables set in browser:', window.process.env);
     console.log('[Mock] Copilot SDK mock injected into browser');
   `;
 

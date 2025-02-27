@@ -3,8 +3,9 @@ import { Project } from '@/types/project';
 import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
 import { Container } from '@/components/common/Container';
 import { TokenGate } from '@/components/common/TokenGate';
-import { copilotApi } from 'copilot-node-sdk';
 import type { SearchParams } from '@/app/search-params';
+import { validateCopilotToken } from '@/utils/copilot-sdk';
+import { shouldSkipSDKValidation } from '@/utils/environment';
 
 export const metadata: Metadata = {
   title: 'Project Details | CEART',
@@ -23,27 +24,20 @@ async function Content({
   projectId: string;
   token?: string;
 }) {
-  // Check if we're in a test/CI environment
-  const { isTestOrCIEnvironment } = await import('@/utils/environment');
-  const isTestOrCI = isTestOrCIEnvironment();
+  // Log environment information for debugging
+  console.log('Project page environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    COPILOT_ENV: process.env.COPILOT_ENV,
+    NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+    shouldSkipSDKValidation: shouldSkipSDKValidation(),
+  });
 
-  if (!isTestOrCI) {
-    try {
-      // Setup Copilot API client
-      const copilot = copilotApi({
-        apiKey: process.env.COPILOT_API_KEY ?? '',
-        token: typeof token === 'string' ? token : undefined,
-      });
+  // Validate Copilot token, with proper handling for test/CI environments
+  const { isValid, error } = await validateCopilotToken(token);
 
-      // These API calls are kept for session validation
-      await copilot.retrieveWorkspace();
-      await copilot.getTokenPayload?.();
-    } catch (error) {
-      console.log('Running in CI/test environment, skipping SDK validation');
-      // In CI/test, we continue even if SDK validation fails
-    }
-  } else {
-    console.log('Running in CI/test environment, skipping SDK validation');
+  // We don't need to throw errors - all validation failures will be handled gracefully in test/CI
+  if (!isValid) {
+    console.log(`Token validation issue (continuing anyway): ${error}`);
   }
 
   return (

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { copilotApi } from 'copilot-node-sdk';
 import { validateAndExtractTokenClaims } from './token-validation';
+import { createCopilotClient } from './copilot-sdk';
 import { shouldSkipSDKValidation } from './environment';
 
 /**
@@ -23,10 +23,8 @@ export async function validateToken(
   if (process.env.NEXT_PHASE === 'phase-production-build') {
     // Build-time validation is skipped
     console.log('Skipping validation during build phase');
-    const copilot = copilotApi({
-      apiKey: process.env.COPILOT_API_KEY || '',
-    });
-    return { copilot, response: null, claims: null };
+    const { client } = createCopilotClient();
+    return { copilot: client, response: null, claims: null };
   }
 
   // Use the centralized environment check function
@@ -34,10 +32,8 @@ export async function validateToken(
     console.log(
       'Running in non-production environment, skipping SDK validation',
     );
-    const copilot = copilotApi({
-      apiKey: process.env.COPILOT_API_KEY || '',
-    });
-    return { copilot, response: null, claims: null };
+    const { client } = createCopilotClient();
+    return { copilot: client, response: null, claims: null };
   }
 
   // Extract token from URL or searchParams
@@ -105,17 +101,24 @@ export async function validateToken(
 
   // Token is valid, create Copilot client
   try {
-    const copilot = copilotApi({
-      apiKey: process.env.COPILOT_API_KEY || '',
-      token,
-    });
+    const { client } = createCopilotClient(token);
 
     return {
-      copilot,
+      copilot: client,
       claims: validationResult.claims || null,
       response: null,
     };
   } catch (error) {
+    // If we're in a test/CI environment, return a mock client instead of an error
+    if (shouldSkipSDKValidation()) {
+      console.log(
+        'Error creating Copilot client in test/CI environment (ignoring):',
+        error,
+      );
+      const { client } = createCopilotClient();
+      return { copilot: client, claims: null, response: null };
+    }
+
     return {
       copilot: null,
       claims: null,

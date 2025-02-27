@@ -1,7 +1,8 @@
-import { copilotApi } from 'copilot-node-sdk';
 import type { SearchParams } from '../search-params';
 import { TokenGate } from '@/components/common/TokenGate';
 import { ProjectsDashboard } from '@/components/project-dashboard/ProjectsDashboard';
+import { validateCopilotToken } from '@/utils/copilot-sdk';
+import { shouldSkipSDKValidation } from '@/utils/environment';
 
 /**
  * The revalidate property determine's the cache TTL for this page and
@@ -15,33 +16,23 @@ export default async function Home({
 }: {
   searchParams: SearchParams;
 }) {
-  // Skip SDK validation in test mode completely
-  if (
-    process.env.NODE_ENV === 'test' ||
-    process.env.NEXT_PUBLIC_TEST_MODE === 'true'
-  ) {
-    console.log('Running in test mode, skipping SDK validation');
-  } else {
-    // Setup Copilot API client (server-side)
-    const { token } = searchParams;
-    const copilot = copilotApi({
-      apiKey: process.env.COPILOT_API_KEY ?? '',
-      token: typeof token === 'string' ? token : undefined,
-    });
+  // Log environment information for debugging
+  console.log('Home page environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    COPILOT_ENV: process.env.COPILOT_ENV,
+    NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+    shouldSkipSDKValidation: shouldSkipSDKValidation(),
+  });
 
-    // Validate session server-side
-    try {
-      await copilot.retrieveWorkspace();
-      if (typeof copilot.getTokenPayload === 'function') {
-        await copilot.getTokenPayload();
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Running in development mode without SDK validation');
-      } else {
-        throw new Error('Unable to authorize Copilot SDK.');
-      }
-    }
+  // Validate Copilot token, with proper handling for test/CI environments
+  const { token } = searchParams;
+  const { isValid, error } = await validateCopilotToken(
+    typeof token === 'string' ? token : undefined,
+  );
+
+  // Only throw in production environments
+  if (!isValid && !shouldSkipSDKValidation()) {
+    throw new Error(`Unable to authorize Copilot SDK: ${error}`);
   }
 
   // Return the components directly from the server component
