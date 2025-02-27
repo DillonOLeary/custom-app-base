@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { Project } from '@/types/project';
-import { ProjectDetail } from '@/components/projects/ProjectDetail';
-import { Container } from '@/components/Container';
-import { TokenGate } from '@/components/TokenGate';
+import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
+import { Container } from '@/components/common/Container';
+import { TokenGate } from '@/components/common/TokenGate';
 
 export const metadata: Metadata = {
   title: 'Project Details | CEART',

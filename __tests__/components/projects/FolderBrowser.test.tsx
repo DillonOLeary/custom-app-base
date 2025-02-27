@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import { FolderBrowser } from '@/components/projects/FolderBrowser';
+import { FolderBrowser } from '@/components/project-detail/FolderBrowser';
 import { Folder, FileUpload, RedFlag } from '@/types/project';
 
 describe('FolderBrowser', () => {

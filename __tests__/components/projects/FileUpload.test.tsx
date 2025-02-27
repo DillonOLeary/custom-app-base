@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { FileUpload } from '@/components/projects/FileUpload';
-import * as projectDetailApi from '@/services/projectDetailApi';
+import { FileUpload } from '@/components/project-detail/FileUpload';
+import * as api from '@/services/api';
 
-// Mock the projectDetailApi
-jest.mock('@/services/projectDetailApi', () => ({
+// Mock the API
+jest.mock('@/services/api', () => ({
   uploadFile: jest.fn(),
 }));
 
@@ -24,9 +24,7 @@ describe('FileUpload', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (projectDetailApi.uploadFile as jest.Mock).mockResolvedValue(
-      mockUploadedFile,
-    );
+    (api.uploadFile as jest.Mock).mockResolvedValue(mockUploadedFile);
   });
 
   test('renders the component correctly', () => {
@@ -67,10 +65,7 @@ describe('FileUpload', () => {
 
     // Verify API was called
     await waitFor(() => {
-      expect(projectDetailApi.uploadFile).toHaveBeenCalledWith(
-        mockProjectId,
-        mockFile,
-      );
+      expect(api.uploadFile).toHaveBeenCalledWith(mockProjectId, mockFile);
     });
 
     // Verify callback was called
@@ -81,7 +76,7 @@ describe('FileUpload', () => {
 
   test('shows uploading state during file upload', async () => {
     // Mock delay in upload
-    (projectDetailApi.uploadFile as jest.Mock).mockImplementation(() => {
+    (api.uploadFile as jest.Mock).mockImplementation(() => {
       return new Promise((resolve) => {
         setTimeout(() => resolve(mockUploadedFile), 100);
       });
@@ -112,7 +107,7 @@ describe('FileUpload', () => {
   test('shows error message on upload failure', async () => {
     // Mock upload error
     const mockError = new Error('Upload failed');
-    (projectDetailApi.uploadFile as jest.Mock).mockRejectedValue(mockError);
+    (api.uploadFile as jest.Mock).mockRejectedValue(mockError);
 
     render(
       <FileUpload

@@ -6,7 +6,7 @@ import {
   RedFlag,
   ScoreCategory,
 } from '@/types/project';
-import { getMockProjects } from '@/services/projectApi';
+import { getMockProjects } from '@/services/api';
 
 // Generate a consistent set of red flags for a project
 const generateRedFlags = (

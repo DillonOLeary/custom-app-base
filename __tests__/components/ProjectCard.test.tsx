@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ProjectCard } from '@/components/ProjectCard';
+import { ProjectCard } from '@/components/project-dashboard/ProjectCard';
 import { Project } from '@/types/project';
 
 // Create a simple mock for Next.js Link component

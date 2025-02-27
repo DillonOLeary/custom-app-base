@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ProjectList } from '@/components/ProjectList';
+import { ProjectList } from '@/components/project-dashboard/ProjectList';
 import { Project } from '@/types/project';
 
 // Mock the ProjectCard component
-jest.mock('@/components/ProjectCard', () => ({
+jest.mock('@/components/project-dashboard/ProjectCard', () => ({
   ProjectCard: ({ project }: { project: Project }) => (
     <div data-testid={`project-card-mock-${project.id}`}>{project.name}</div>
   ),

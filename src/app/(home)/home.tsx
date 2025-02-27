@@ -1,7 +1,7 @@
 import { copilotApi } from 'copilot-node-sdk';
-
-import { TokenGate } from '@/components/TokenGate';
-import { ProjectsDashboard } from '@/components/ProjectsDashboard';
+import type { SearchParams } from '../search-params';
+import { TokenGate } from '@/components/common/TokenGate';
+import { ProjectsDashboard } from '@/components/project-dashboard/ProjectsDashboard';
 
 /**
  * The revalidate property determine's the cache TTL for this page and

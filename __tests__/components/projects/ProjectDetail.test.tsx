@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ProjectDetail } from '@/components/projects/ProjectDetail';
+import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
 import { mockProject } from '../../support/testUtils';
-import * as projectDetailApi from '@/services/projectDetailApi';
+import * as api from '@/services/api';
 
 // Mock the API functions
-jest.mock('@/services/projectDetailApi', () => ({
+jest.mock('@/services/api', () => ({
   getProjectDetails: jest.fn(),
   getProjectFiles: jest.fn(),
   uploadFile: jest.fn(),
@@ -19,11 +19,10 @@ describe('ProjectDetail', () => {
 
   test('renders loading state correctly', async () => {
     // Setup mocks to return promises that don't resolve immediately
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockImplementation(() => new Promise(() => {}));
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockImplementation(() => new Promise(() => {}));
 
     render(<ProjectDetail projectId="test-id" />);
@@ -34,11 +33,10 @@ describe('ProjectDetail', () => {
 
   test('renders project with analysis results correctly', async () => {
     // Setup mocks
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(mockProject);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);
@@ -70,11 +68,10 @@ describe('ProjectDetail', () => {
       status: 'pending',
     };
 
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(projectWithoutAnalysis);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);
@@ -107,11 +104,10 @@ describe('ProjectDetail', () => {
       status: 'analyzing',
     };
 
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(analyzingProject);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);
@@ -148,11 +144,10 @@ describe('ProjectDetail', () => {
         'Analysis failed due to incomplete documentation and missing permit information.',
     };
 
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(failedProject);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);
@@ -184,7 +179,7 @@ describe('ProjectDetail', () => {
   test.skip('runs analysis when button is clicked', async () => {
     // Mock the API methods using jest.spyOn instead of direct assignment
     const mockRunAnalysis = jest
-      .spyOn(projectDetailApi, 'runAnalysis')
+      .spyOn(api, 'runAnalysis')
       .mockImplementation(() => Promise.resolve({} as any));
 
     // Setup mocks with a pending project that has files but no analysis
@@ -194,11 +189,10 @@ describe('ProjectDetail', () => {
       status: 'pending',
     };
 
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(pendingProject);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);
@@ -247,7 +241,7 @@ describe('ProjectDetail', () => {
   test.skip('retries analysis for failed projects', async () => {
     // Mock the API methods using jest.spyOn instead of direct assignment
     const mockRunAnalysis = jest
-      .spyOn(projectDetailApi, 'runAnalysis')
+      .spyOn(api, 'runAnalysis')
       .mockImplementation(() => Promise.resolve({} as any));
 
     // Setup mocks with a failed project
@@ -258,11 +252,10 @@ describe('ProjectDetail', () => {
       analysisError: 'Analysis failed due to incomplete documentation.',
     };
 
-    const mockGetProjectDetails =
-      projectDetailApi.getProjectDetails as jest.Mock;
+    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
     mockGetProjectDetails.mockResolvedValue(failedProject);
 
-    const mockGetProjectFiles = projectDetailApi.getProjectFiles as jest.Mock;
+    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
     mockGetProjectFiles.mockResolvedValue(mockProject.files);
 
     render(<ProjectDetail projectId="test-id" />);

@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ProjectsDashboard } from '@/components/ProjectsDashboard';
-import { getMockProjects } from '@/services/projectApi';
+import { ProjectsDashboard } from '@/components/project-dashboard/ProjectsDashboard';
+import { getMockProjects } from '@/services/api';
 
 // Mock the API fetch calls
 global.fetch = jest.fn();
 
 // Mock the child components
-jest.mock('@/components/SearchBar', () => ({
+jest.mock('@/components/common/SearchBar', () => ({
   SearchBar: ({ onSearch }: { onSearch: (query: string) => void }) => (
     <div data-testid="search-bar-mock">
       <input
@@ -24,7 +24,7 @@ jest.mock('@/components/SearchBar', () => ({
   ),
 }));
 
-jest.mock('@/components/ProjectList', () => ({
+jest.mock('@/components/project-dashboard/ProjectList', () => ({
   ProjectList: ({
     projects,
     isLoading,
@@ -53,7 +53,7 @@ jest.mock('@/components/ProjectList', () => ({
   ),
 }));
 
-jest.mock('@/components/CreateProjectButton', () => ({
+jest.mock('@/components/project-dashboard/CreateProjectButton', () => ({
   CreateProjectButton: ({
     onProjectCreate,
   }: {

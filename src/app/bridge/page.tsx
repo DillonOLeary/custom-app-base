@@ -1,7 +1,8 @@
 import { Body, Heading, Icon } from 'copilot-design-system';
-import { Container } from '@/components/Container';
+import { Container } from '@/components/common/Container';
 import { Demo } from '@/app/bridge/demo';
 import { copilotApi } from 'copilot-node-sdk';
+import type { SearchParams } from '../search-params';
 
 export default async function Page({
   searchParams,

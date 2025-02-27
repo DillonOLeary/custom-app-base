@@ -1,6 +1,7 @@
 import Image from 'next/image';
-import { TokenGate } from '@/components/TokenGate';
-import { Container } from '@/components/Container';
+import { TokenGate } from '@/components/common/TokenGate';
+import { Container } from '@/components/common/Container';
+import type { SearchParams } from '../search-params';
 
 /**
  * The revalidate property determine's the cache TTL for this page and

@@ -1,3 +1,5 @@
+import type { SearchParams } from '@/app/search-params';
+
 export function TokenGate({
   children,
   searchParams,

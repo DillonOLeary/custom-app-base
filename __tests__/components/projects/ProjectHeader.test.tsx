@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ProjectHeader } from '@/components/projects/ProjectHeader';
+import { ProjectHeader } from '@/components/project-detail/ProjectHeader';
 import { mockProject } from '../../support/testUtils';
 
 // Mock Next.js Link component

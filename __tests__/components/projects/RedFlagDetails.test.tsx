@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { RedFlagDetails } from '@/components/projects/RedFlagDetails';
+import { RedFlagDetails } from '@/components/project-detail/RedFlagDetails';
 import { mockProject } from '../../support/testUtils';
 import { CATEGORY_DESCRIPTIONS } from '@/utils/categoryDescriptions';
 

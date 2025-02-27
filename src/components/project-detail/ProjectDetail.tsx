@@ -7,13 +7,14 @@ import {
   getProjectFiles,
   uploadFile,
   runAnalysis,
-} from '@/services/projectDetailApi';
+} from '@/services/api';
 import { ProjectHeader } from './ProjectHeader';
 import { FileUpload } from './FileUpload';
 import { FileList } from './FileList';
 import { FolderBrowser } from './FolderBrowser';
 import { ScoreOverview } from './ScoreOverview';
 import { RedFlagDetails } from './RedFlagDetails';
+import { AnalysisStatusPanel } from './AnalysisStatusPanel';
 import { FileUpload as FileUploadType, Folder } from '@/types/project';
 import { processFilesForProject } from '@/utils/fileUtils';
 
@@ -46,6 +47,34 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
     }
   }, [projectId]);
 
+  // Extract file processing logic to reduce duplication
+  const processFiles = useCallback(
+    (filesData: FileUploadType[]) => {
+      const redFlags =
+        project?.analysisResult?.categoryScores.flatMap(
+          (cat) => cat.redFlags,
+        ) || [];
+
+      try {
+        const { folders: processedFolders, rootFiles: processedRootFiles } =
+          processFilesForProject(
+            filesData,
+            redFlags.length > 0 ? redFlags : undefined,
+          );
+
+        // Set folder data in a single update to prevent re-renders
+        setFolders(processedFolders);
+        setRootFiles(processedRootFiles);
+      } catch (processingErr) {
+        console.error('Error processing file structure:', processingErr);
+        // If processing fails, just show flat file list
+        setFolders([]);
+        setRootFiles(filesData);
+      }
+    },
+    [project?.analysisResult],
+  );
+
   const fetchProjectFiles = useCallback(async () => {
     // Don't set loading if we already have files to prevent flickering
     if (files.length === 0) {
@@ -59,47 +88,14 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
       setFiles(filesData);
 
       // Process files to get folder structure
-      if (project?.analysisResult) {
-        // If we have analysis results, include red flags
-        const redFlags = project.analysisResult.categoryScores.flatMap(
-          (cat) => cat.redFlags,
-        );
-
-        // Use try/catch to prevent processing errors from crashing the app
-        try {
-          const { folders: processedFolders, rootFiles: processedRootFiles } =
-            processFilesForProject(filesData, redFlags);
-
-          // Set folder data in a single update to prevent re-renders
-          setFolders(processedFolders);
-          setRootFiles(processedRootFiles);
-        } catch (processingErr) {
-          console.error('Error processing file structure:', processingErr);
-          // If processing fails, just show flat file list
-          setFolders([]);
-          setRootFiles(filesData);
-        }
-      } else {
-        // Just organize files without red flags
-        try {
-          const { folders: processedFolders, rootFiles: processedRootFiles } =
-            processFilesForProject(filesData);
-
-          setFolders(processedFolders);
-          setRootFiles(processedRootFiles);
-        } catch (processingErr) {
-          console.error('Error processing file structure:', processingErr);
-          setFolders([]);
-          setRootFiles(filesData);
-        }
-      }
+      processFiles(filesData);
     } catch (err) {
       console.error('Error fetching project files:', err);
       // Not setting an error state here to keep the UI clean
     } finally {
       setIsLoadingFiles(false);
     }
-  }, [projectId, project?.analysisResult, files.length]);
+  }, [projectId, files.length, processFiles]);
 
   // Use separate useEffects to avoid flickering - first load project, then files
   useEffect(() => {
@@ -114,31 +110,14 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
 
   const handleUploadComplete = useCallback(
     (file: FileUploadType) => {
-      setFiles((prevFiles) => [file, ...prevFiles]);
+      // Update files array with the new file
+      const updatedFiles = [file, ...files];
+      setFiles(updatedFiles);
 
       // Re-process folder structure with the new file
-      const updatedFiles = [file, ...files];
-
-      if (project?.analysisResult) {
-        // Include red flags if available
-        const redFlags = project.analysisResult.categoryScores.flatMap(
-          (cat) => cat.redFlags,
-        );
-        const { folders: processedFolders, rootFiles: processedRootFiles } =
-          processFilesForProject(updatedFiles, redFlags);
-
-        setFolders(processedFolders);
-        setRootFiles(processedRootFiles);
-      } else {
-        // Just organize files
-        const { folders: processedFolders, rootFiles: processedRootFiles } =
-          processFilesForProject(updatedFiles);
-
-        setFolders(processedFolders);
-        setRootFiles(processedRootFiles);
-      }
+      processFiles(updatedFiles);
     },
-    [files, project?.analysisResult],
+    [files, processFiles],
   );
 
   // Handle file download
@@ -241,97 +220,29 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
 
         {/* Show a message if no analysis results are available yet */}
         {!project.analysisResult && (
-          <div className="bg-white border border-[--color-bg-1] p-6 rounded-lg mb-8">
-            {project.status === 'analyzing' ? (
-              <>
-                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
-                  ANALYSIS IN PROGRESS
-                </h2>
-                <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  We&apos;re analyzing your project files to generate a
-                  CEARTscore.
-                </p>
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[--color-primary] mr-2"></div>
-                  <span className="heading-secondary text-3">
-                    Analysis in progress...
-                  </span>
-                </div>
-              </>
-            ) : project.status === 'failed' ? (
-              <>
-                <h2 className="heading-primary heading-2 text-[--color-secondary] mb-3">
-                  ANALYSIS FAILED
-                </h2>
-                <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  {(project as any).analysisError ||
-                    'Analysis failed due to incomplete documentation.'}
-                </p>
-                <div className="flex justify-center">
-                  <button
-                    onClick={async () => {
-                      try {
-                        setIsLoading(true);
-                        await runAnalysis(projectId);
-                        await fetchProjectDetails();
-                      } catch (err) {
-                        console.error('Error running analysis:', err);
-                        setError('Failed to run analysis. Please try again.');
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                    className="ceart-button ceart-button-primary"
-                    disabled={isLoading}
-                    data-testid="retry-analysis-button"
-                    // This special ID attribute helps in synchronizing tests
-                    id="retry-analysis-btn-for-testing"
-                  >
-                    {isLoading ? 'Processing...' : 'Retry Analysis'}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
-                  ANALYSIS PENDING
-                </h2>
-                <p className="heading-secondary text-2 text-[--color-text-dark] mb-4">
-                  {files.length > 0
-                    ? 'Your files are ready for analysis. Run CEARTscore analysis to evaluate your project.'
-                    : 'Upload files to analyze your project and generate a CEARTscore.'}
-                </p>
-                <div className="flex justify-center">
-                  <button
-                    onClick={async () => {
-                      try {
-                        if (files.length === 0) {
-                          alert('Please upload files before running analysis');
-                          return;
-                        }
-                        // Added a test comment to see if git hooks run
-                        setIsLoading(true);
-                        await runAnalysis(projectId);
-                        await fetchProjectDetails();
-                      } catch (err) {
-                        console.error('Error running analysis:', err);
-                        setError('Failed to run analysis. Please try again.');
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                    className="ceart-button ceart-button-primary"
-                    disabled={isLoading || files.length === 0}
-                    data-testid="run-analysis-button"
-                    // This special ID attribute helps in synchronizing tests
-                    id="run-analysis-btn-for-testing"
-                  >
-                    {isLoading ? 'Processing...' : 'Run CEARTscore Analysis'}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+          <AnalysisStatusPanel
+            projectStatus={project.status}
+            analysisError={(project as any).analysisError}
+            isLoading={isLoading}
+            filesCount={files.length}
+            projectId={projectId}
+            onRunAnalysis={async () => {
+              try {
+                if (files.length === 0) {
+                  alert('Please upload files before running analysis');
+                  return;
+                }
+                setIsLoading(true);
+                await runAnalysis(projectId);
+                await fetchProjectDetails();
+              } catch (err) {
+                console.error('Error running analysis:', err);
+                setError('Failed to run analysis. Please try again.');
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+          />
         )}
 
         {/* File Upload always comes next (either after analysis results or pending message) */}

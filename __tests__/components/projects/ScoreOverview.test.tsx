@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ScoreOverview } from '@/components/projects/ScoreOverview';
+import { ScoreOverview } from '@/components/project-detail/ScoreOverview';
 import { mockProject } from '../../support/testUtils';
 import { CATEGORY_DESCRIPTIONS } from '@/utils/categoryDescriptions';
 import { ScoreCategory } from '@/types/project';

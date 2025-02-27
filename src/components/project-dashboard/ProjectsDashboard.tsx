@@ -2,12 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Project } from '@/types/project';
-import {
-  getProjects,
-  searchProjects,
-  createProject,
-} from '@/services/projectApi';
-import { SearchBar } from './SearchBar';
+import { getProjects, searchProjects, createProject } from '@/services/api';
+import { SearchBar } from '../common/SearchBar';
 import { ProjectList } from './ProjectList';
 import { CreateProjectButton } from './CreateProjectButton';
 

@@ -1,4 +1,4 @@
-import { getMockProjects } from '@/services/projectApi';
+import { getMockProjects } from '@/services/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

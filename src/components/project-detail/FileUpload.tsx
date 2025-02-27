@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
-import { uploadFile } from '@/services/projectDetailApi';
+import { uploadFile } from '@/services/api';
 import { FileUpload as FileUploadType } from '@/types/project';
 
 interface FileUploadProps {

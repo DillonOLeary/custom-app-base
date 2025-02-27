@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SearchBar } from '@/components/SearchBar';
+import { SearchBar } from '@/components/common/SearchBar';
 
 describe('SearchBar', () => {
   test('should render with default placeholder', () => {
