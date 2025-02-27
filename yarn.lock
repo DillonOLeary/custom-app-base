@@ -2016,6 +2016,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stryker-mutator/typescript-checker@npm:^8.7.1":
+  version: 8.7.1
+  resolution: "@stryker-mutator/typescript-checker@npm:8.7.1"
+  dependencies:
+    "@stryker-mutator/api": "npm:8.7.1"
+    "@stryker-mutator/util": "npm:8.7.1"
+    semver: "npm:~7.6.3"
+  peerDependencies:
+    "@stryker-mutator/core": ~8.7.0
+    typescript: ">=3.6"
+  checksum: 10c0/ceefb0f8981341d5f8b597c9700d7b47d370acb60541f1b9527250930e7867be56f3fc3c9d6843e967ed10683ce9a861b559922d973f62d4696a136cef5f8632
+  languageName: node
+  linkType: hard
+
 "@stryker-mutator/util@npm:8.7.1":
   version: 8.7.1
   resolution: "@stryker-mutator/util@npm:8.7.1"
@@ -3591,6 +3605,7 @@ __metadata:
     "@playwright/test": "npm:^1.50.1"
     "@stryker-mutator/core": "npm:^8.7.1"
     "@stryker-mutator/jest-runner": "npm:^8.7.1"
+    "@stryker-mutator/typescript-checker": "npm:^8.7.1"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"

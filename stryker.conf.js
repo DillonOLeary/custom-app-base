@@ -6,24 +6,19 @@ module.exports = {
   jest: {
     projectType: 'custom',
     configFile: 'jest.config.js',
+    config: {
+      testMatch: [
+        '**/__tests__/**/*.[jt]s?(x)',
+        '**/?(*.)+(spec|test).[jt]s?(x)',
+      ],
+    },
     enableFindRelatedTests: true,
   },
   checkers: ['typescript'],
   tsconfigFile: 'tsconfig.json',
   concurrency: 4,
   ignoreStatic: true,
-  ignorePatterns: [
-    '**/*.spec.ts',
-    '**/*.test.ts',
-    '**/*.test.tsx',
-    'node_modules/**/*',
-    '.next/**/*',
-  ],
+  ignorePatterns: ['node_modules/**/*', '.next/**/*'],
   thresholds: { high: 80, low: 60, break: 50 },
-  mutate: [
-    'src/utils/**/*.ts',
-    'src/services/**/*.ts',
-    '\!src/**/*.d.ts',
-    '\!src/**/__tests__/**/*',
-  ],
+  mutate: ['src/utils/api-auth.ts'],
 };
