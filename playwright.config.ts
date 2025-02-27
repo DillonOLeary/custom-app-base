@@ -19,10 +19,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'yarn dev',
+    command: 'COPILOT_ENV=local yarn dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
     stderr: 'pipe',
+    env: {
+      COPILOT_ENV: 'local',
+    },
   },
 });
