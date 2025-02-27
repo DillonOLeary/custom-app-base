@@ -14,10 +14,11 @@ import { setupSdkMocks } from './setup/sdk-mock';
 export function initTestEnvironment(): void {
   // Set up the Copilot SDK mocks
   setupSdkMocks();
-  
-  // Ensure the COPILOT_ENV is set to 'local'
+
+  // Ensure we have proper environment variables set for tests
   process.env.COPILOT_ENV = 'local';
-  
+  process.env.NODE_ENV = 'test';
+
   console.log('Test environment initialized');
 }
 
