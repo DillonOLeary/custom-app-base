@@ -5,12 +5,12 @@ import { mockProject } from '../../support/testUtils';
 import * as api from '@/services/api';
 import { Project } from '@/types/project';
 
-// Mock the API functions
+// Mock the API functions with stable implementations
 jest.mock('@/services/api', () => ({
-  getProjectDetails: jest.fn(),
-  getProjectFiles: jest.fn(),
-  uploadFile: jest.fn(),
-  runAnalysis: jest.fn(),
+  getProjectDetails: jest.fn().mockImplementation(() => Promise.resolve({})),
+  getProjectFiles: jest.fn().mockImplementation(() => Promise.resolve([])),
+  uploadFile: jest.fn().mockImplementation(() => Promise.resolve({})),
+  runAnalysis: jest.fn().mockImplementation(() => Promise.resolve({})),
 }));
 
 describe('ProjectDetail', () => {

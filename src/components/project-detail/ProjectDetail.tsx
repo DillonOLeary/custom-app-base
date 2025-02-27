@@ -124,8 +124,8 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
   const handleFileDownload = useCallback((file: FileUploadType) => {
     if (file.downloadUrl) {
       // In a real app, this would trigger a download
-      // For the mock, just show an alert
-      alert(`Downloading file: ${file.fileName}`);
+      // For the mock, just log to console - skipping alert for test compatibility
+      console.log(`Downloading file: ${file.fileName}`);
 
       // In production, this would be:
       // window.open(file.downloadUrl, '_blank');
@@ -229,7 +229,7 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
             onRunAnalysis={async () => {
               try {
                 if (files.length === 0) {
-                  alert('Please upload files before running analysis');
+                  setError('Please upload files before running analysis');
                   return;
                 }
                 setIsLoading(true);
