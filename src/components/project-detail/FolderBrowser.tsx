@@ -291,7 +291,7 @@ export function FolderBrowser({
   const isEmpty = folders.length === 0 && files.length === 0;
 
   return (
-    <div className="mb-8">
+    <div className="mb-8" data-testid="folder-browser-container">
       <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
         DATA ROOM BROWSER
       </h2>
