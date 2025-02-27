@@ -18,14 +18,9 @@ export async function validateToken(
         nextUrl?: { searchParams: { get: (key: string) => string | null } };
       },
 ) {
-  // Special handling for static generation, build-time execution, or production environment
-  if (
-    process.env.NEXT_PHASE === 'phase-production-build' ||
-    process.env.NODE_ENV === 'production'
-  ) {
-    console.log(
-      'Running in build phase or production - skipping token validation',
-    );
+  // Only skip validation during build time, not during runtime
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log('Running in build phase - skipping token validation');
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',
     });

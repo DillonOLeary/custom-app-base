@@ -2,6 +2,7 @@
 const nextConfig = {
   env: {
     COPILOT_ENV: process.env.COPILOT_ENV,
+    COPILOT_API_KEY: process.env.COPILOT_API_KEY,
   },
   headers: async () => {
     return [
