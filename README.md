@@ -1,5 +1,7 @@
 # README for Custom App Base
 
+[![PR Checks](https://github.com/DillonOLeary/custom-app-base/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/DillonOLeary/custom-app-base/actions/workflows/pr-checks.yml)
+
 This repository is a starting point for [Copilot Apps](https://www.copilot.com/apps). It is built using using [Next.js](https://nextjs.org/) and was bootstrapped with [create-next-app](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ### Benefits
@@ -50,3 +52,32 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-updat
 ### Content Security Policy
 
 The Content Security Policy in the custom app base should be configured in `src/middleware.ts`. In the `cspHeader` variable under `frame-ancestors`, `https://dashboard.copilot.com` and `https://*.copilot.app` are pre-configured. If you have a custom domain, you'll also want to add your custom domain here. For example, `https://portal.mycompany.com`.
+
+### Continuous Integration
+
+This repository includes GitHub Actions workflows that automatically run checks when PRs are created or when code is pushed to the main branch:
+
+- **Linting**: Ensures code adheres to ESLint rules
+- **Type Checking**: Validates TypeScript types
+- **Format Checking**: Verifies code formatting with Prettier
+- **Testing**: Runs Jest tests
+- **Build**: Confirms the application builds correctly
+
+You can run these checks locally with:
+
+```bash
+# Lint check
+yarn lint
+
+# Type check
+yarn tsc --noEmit
+
+# Format check
+yarn format:check
+
+# Tests
+yarn test
+
+# Build check
+yarn build
+```
