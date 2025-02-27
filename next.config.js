@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    COPILOT_ENV: process.env.COPILOT_ENV,
+    // Set COPILOT_ENV to 'local' for CI testing if it's not already defined
+    COPILOT_ENV:
+      process.env.COPILOT_ENV ||
+      (process.env.CI === 'true' ? 'local' : undefined),
     COPILOT_API_KEY: process.env.COPILOT_API_KEY,
   },
   headers: async () => {
@@ -26,5 +29,12 @@ const nextConfig = {
     ];
   },
 };
+
+// Log the environment configuration
+console.log('Next.js env configuration:', {
+  COPILOT_ENV: nextConfig.env.COPILOT_ENV,
+  NODE_ENV: process.env.NODE_ENV,
+  CI: process.env.CI,
+});
 
 module.exports = nextConfig;
