@@ -16,9 +16,9 @@ jobs:
           node-version: 20
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --immutable
-      - name: Update browserslist database
-        run: yarn up browserslist caniuse-lite
+        run: yarn install --no-immutable
+      - name: Install Playwright
+        run: yarn add -D @playwright/test
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests

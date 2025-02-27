@@ -72,6 +72,13 @@ This repository uses GitHub Actions for CI/CD with a sequential workflow pipelin
 
 This sequential pipeline ensures that tests only run if the code passes all validation checks, and the build verification only runs if tests pass. This optimizes the workflow by failing fast when there are issues.
 
+Additionally, the repository uses separate workflows for:
+
+1. **Vercel Deployment Tests**: Runs unit tests and build verification for production deployments
+2. **End-to-End Tests**: Runs Playwright tests against the application UI
+
+The end-to-end tests are only run in the CI environment (GitHub Actions) and during development, but not in the production deployment to avoid issues with dependencies like Playwright.
+
 You can run these checks locally with:
 
 ```bash
@@ -84,8 +91,11 @@ yarn tsc --noEmit
 # Format check
 yarn format:check
 
-# Tests
+# Unit tests
 yarn test
+
+# End-to-end tests (requires Playwright)
+yarn test:e2e
 
 # Build check
 yarn build
@@ -125,7 +135,8 @@ Additionally, Renovate Bot is configured as an alternative:
 
   - `/src` - Application source code
   - `/public` - Static assets
-  - `/__tests__` - Test files
+  - `/__tests__` - Unit test files
+  - `/e2e` - End-to-end test files with Playwright
 
 - **Build Tools and Git**:
   - `/.husky` - Git hooks configuration
@@ -138,4 +149,7 @@ The following files are generated during development and build processes and sho
 - `/.next` - Next.js build directory
 - `*.tsbuildinfo` - TypeScript incremental build info
 - `/coverage` - Test coverage reports
+- `/playwright-report` - Playwright test reports
+- `/test-results` - Playwright test results
+- `/e2e/results` - Playwright test screenshots
 - `.env*.local` - Local environment variables
