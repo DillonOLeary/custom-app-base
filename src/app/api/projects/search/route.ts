@@ -1,7 +1,12 @@
 import { getMockProjects } from '@/services/api';
 import { NextRequest, NextResponse } from 'next/server';
+import { validateToken } from '@/utils/api-auth';
 
 export async function GET(request: NextRequest) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get('q') || '';
 

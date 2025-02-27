@@ -25,14 +25,13 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
  */
 export async function get<T>(url: string, token?: string): Promise<T> {
   try {
-    const headers: HeadersInit = {};
+    // Add token to URL as a query parameter
+    const urlObj = new URL(url, window.location.origin);
     if (token) {
-      headers['X-Copilot-Token'] = token;
+      urlObj.searchParams.set('token', token);
     }
 
-    const response = await fetch(url, {
-      headers,
-    });
+    const response = await fetch(urlObj.toString());
     return await handleApiResponse<T>(response);
   } catch (error) {
     console.error(`GET request failed for ${url}:`, error);
@@ -49,15 +48,17 @@ export async function post<T, D = unknown>(
   token?: string,
 ): Promise<T> {
   try {
+    // Add token to URL as a query parameter
+    const urlObj = new URL(url, window.location.origin);
+    if (token) {
+      urlObj.searchParams.set('token', token);
+    }
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
 
-    if (token) {
-      headers['X-Copilot-Token'] = token;
-    }
-
-    const response = await fetch(url, {
+    const response = await fetch(urlObj.toString(), {
       method: 'POST',
       headers,
       body: data ? JSON.stringify(data) : undefined,
@@ -79,15 +80,17 @@ export async function put<T, D = unknown>(
   token?: string,
 ): Promise<T> {
   try {
+    // Add token to URL as a query parameter
+    const urlObj = new URL(url, window.location.origin);
+    if (token) {
+      urlObj.searchParams.set('token', token);
+    }
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
 
-    if (token) {
-      headers['X-Copilot-Token'] = token;
-    }
-
-    const response = await fetch(url, {
+    const response = await fetch(urlObj.toString(), {
       method: 'PUT',
       headers,
       body: data ? JSON.stringify(data) : undefined,
@@ -109,15 +112,14 @@ export async function postFormData<T>(
   token?: string,
 ): Promise<T> {
   try {
-    const headers: HeadersInit = {};
-
+    // Add token to URL as a query parameter
+    const urlObj = new URL(url, window.location.origin);
     if (token) {
-      headers['X-Copilot-Token'] = token;
+      urlObj.searchParams.set('token', token);
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(urlObj.toString(), {
       method: 'POST',
-      headers,
       body: formData,
     });
 

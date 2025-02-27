@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateToken } from '@/utils/api-auth';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string; fileId: string } },
 ) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   const { id, fileId } = params;
 
   try {

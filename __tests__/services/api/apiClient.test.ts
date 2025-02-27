@@ -1,7 +1,14 @@
 import { get, post, put, postFormData } from '@/services/api/apiClient';
+import { validateToken } from '@/utils/api-auth';
 
-// Mock fetch to test token propagation
+// Mock fetch and copilotApi
 global.fetch = jest.fn();
+jest.mock('copilot-node-sdk', () => ({
+  copilotApi: jest.fn().mockImplementation(() => ({
+    retrieveWorkspace: jest.fn().mockResolvedValue({}),
+    getTokenPayload: jest.fn().mockResolvedValue({}),
+  })),
+}));
 
 describe('API Client', () => {
   beforeEach(() => {

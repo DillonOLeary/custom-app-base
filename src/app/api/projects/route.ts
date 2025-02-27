@@ -1,7 +1,12 @@
 import { getMockProjects } from '@/services/api';
 import { NextRequest, NextResponse } from 'next/server';
+import { validateToken } from '@/utils/api-auth';
 
 export async function GET(request: NextRequest) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   // Simulate a short delay to mimic a real API call
   await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -9,6 +14,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   const projectData = await request.json();
 
   // Simulate a short delay to mimic a real API call

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { validateToken } from '@/utils/api-auth';
 
 // In a real implementation, this would use actual environment variables
 const DROPBOX_API_KEY = process.env.DROPBOX_API_KEY || 'mock-dropbox-api-key';
@@ -8,6 +9,10 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   const { id } = params;
 
   // For this mock implementation, we'll just pretend to process the file
@@ -54,6 +59,10 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  // Validate the token
+  const { response } = await validateToken(request);
+  if (response) return response;
+
   const { id } = params;
 
   // Simulate a delay
