@@ -3,6 +3,19 @@
  * This ensures tests can run in CI environments without actual Copilot credentials
  */
 
+// Set specific environment variables for e2e tests
+if (typeof process !== 'undefined') {
+  process.env.COPILOT_ENV = 'local';
+  process.env.NEXT_PUBLIC_TEST_MODE = 'true';
+  process.env.CI = 'true'; // Ensure CI flag is set
+
+  console.log('SDK mock setting environment variables:', {
+    COPILOT_ENV: process.env.COPILOT_ENV,
+    NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+    CI: process.env.CI,
+  });
+}
+
 // Mock SDK responses for common API requests
 const mockResponses = {
   // Add mock responses for any SDK calls that your application makes
@@ -225,6 +238,7 @@ const mockResponses = {
     id: 'test-workspace-id',
     name: 'Test Workspace',
     owner: 'test-user-id',
+    portalUrl: 'https://example.com/portal',
   },
 };
 

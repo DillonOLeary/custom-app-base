@@ -29,6 +29,26 @@ export function shouldSkipSDKValidation(): boolean {
   // Safely access environment variables that might be undefined
   // Try/catch for safer client/server code that works in all contexts
   try {
+    // Log environment for debugging
+    console.log('Environment check:', {
+      NODE_ENV: process.env.NODE_ENV,
+      COPILOT_ENV: process.env.COPILOT_ENV,
+      CI: process.env.CI,
+      NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+    });
+
+    // HIGHEST PRIORITY: Check for CI environment first (most important for GitHub Actions)
+    if (process.env.CI === 'true') {
+      console.log('Skipping SDK validation - CI environment detected');
+      return true;
+    }
+
+    // Check for COPILOT_ENV=local which is explicitly set for testing
+    if (process.env.COPILOT_ENV === 'local') {
+      console.log('Skipping SDK validation - COPILOT_ENV=local detected');
+      return true;
+    }
+
     // Check for browser-side test flags (for e2e tests)
     if (typeof window !== 'undefined') {
       if (
@@ -40,13 +60,6 @@ export function shouldSkipSDKValidation(): boolean {
       }
     }
 
-    console.log('Environment check:', {
-      NODE_ENV: process.env.NODE_ENV,
-      COPILOT_ENV: process.env.COPILOT_ENV,
-      CI: process.env.CI,
-      NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
-    });
-
     // Force skip validation in tests
     if (
       process.env.NODE_ENV === 'test' ||
@@ -56,21 +69,15 @@ export function shouldSkipSDKValidation(): boolean {
       return true;
     }
 
-    // Always skip validation in local development
-    if (process.env.COPILOT_ENV === 'local') {
-      console.log('Skipping SDK validation - COPILOT_ENV=local detected');
-      return true;
-    }
-
     // Skip in development environments
     if (process.env.NODE_ENV === 'development') {
       console.log('Skipping SDK validation - development environment detected');
       return true;
     }
 
-    // Skip in CI environments
-    if (process.env.CI === 'true') {
-      console.log('Skipping SDK validation - CI environment detected');
+    // ADDITIONAL SAFETY: If there's no API key available, we should skip validation
+    if (!process.env.COPILOT_API_KEY) {
+      console.log('Skipping SDK validation - no API key available');
       return true;
     }
 

@@ -119,10 +119,40 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
     window.process.env.NEXT_PUBLIC_TEST_MODE = 'true';
     window.process.env.COPILOT_ENV = 'local';
     window.process.env.CI = 'true';
+    window.process.env.COPILOT_API_KEY = 'mock-api-key-for-testing';
     
     // Set window-level test flags
     window.__TEST_MODE__ = true;
     window.__COPILOT_ENV__ = 'local';
+    window.__MOCK_SDK__ = true;
+    
+    // Add special function to check if environment is test/CI
+    window.__isTestEnvironment = function() {
+      return true;
+    };
+    
+    // Override fetch for API calls if needed
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+      // For API requests that need special handling in tests
+      if (typeof url === 'string' && url.includes('/api/')) {
+        console.log('[Mock] Intercepting fetch for API URL:', url);
+        
+        // Example override for specific API endpoints
+        if (url.includes('/api/projects')) {
+          return Promise.resolve(new Response(JSON.stringify([
+            { id: '1', name: 'DESERT SUN SOLAR FARM', score: 87 },
+            { id: '2', name: 'COASTAL WINDS' }
+          ]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          }));
+        }
+      }
+      
+      // Default to original fetch for non-API URLs
+      return originalFetch(url, options);
+    };
     
     console.log('[Mock] Test environment variables set in browser:', window.process.env);
     console.log('[Mock] Copilot SDK mock injected into browser');
