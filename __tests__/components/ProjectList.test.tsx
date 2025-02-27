@@ -36,13 +36,13 @@ describe('ProjectList', () => {
 
   test('should render a list of projects in a grid layout', () => {
     const { container } = render(<ProjectList projects={mockProjects} />);
-    
+
     expect(screen.getByTestId('project-list')).toBeInTheDocument();
     expect(screen.getByTestId('project-card-mock-1')).toBeInTheDocument();
     expect(screen.getByTestId('project-card-mock-2')).toBeInTheDocument();
     expect(screen.getByText('Solar Project 1')).toBeInTheDocument();
     expect(screen.getByText('Wind Project 1')).toBeInTheDocument();
-    
+
     // Verify grid layout classes - we use partial matching since class names may have changed
     const gridElement = screen.getByTestId('project-list');
     expect(gridElement.classList.toString()).toContain('grid');
@@ -52,24 +52,26 @@ describe('ProjectList', () => {
 
   test('should render loading state', () => {
     render(<ProjectList projects={[]} isLoading={true} />);
-    
+
     expect(screen.getByTestId('project-list-loading')).toBeInTheDocument();
     // Should render 6 loading skeletons
-    expect(screen.getAllByRole('generic').filter(el => 
-      el.className.includes('animate-pulse')
-    ).length).toBe(6);
+    expect(
+      screen
+        .getAllByRole('generic')
+        .filter((el) => el.className.includes('animate-pulse')).length,
+    ).toBe(6);
   });
 
   test('should render error state', () => {
     render(<ProjectList projects={[]} error="Test error message" />);
-    
+
     expect(screen.getByTestId('project-list-error')).toBeInTheDocument();
     expect(screen.getByText(/Test error message/)).toBeInTheDocument();
   });
 
   test('should render empty state', () => {
     render(<ProjectList projects={[]} />);
-    
+
     expect(screen.getByTestId('project-list-empty')).toBeInTheDocument();
     expect(screen.getByText(/No projects found/)).toBeInTheDocument();
   });

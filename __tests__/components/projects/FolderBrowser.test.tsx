@@ -12,10 +12,10 @@ describe('FolderBrowser', () => {
       fileSize: 1024 * 1024,
       uploadDate: '2023-01-01T00:00:00Z',
       status: 'completed',
-      downloadUrl: 'download-url'
-    }
+      downloadUrl: 'download-url',
+    },
   ];
-  
+
   const mockFolders: Folder[] = [
     {
       id: 'folder-1',
@@ -30,8 +30,8 @@ describe('FolderBrowser', () => {
           status: 'completed',
           path: 'Test Folder',
           isHighlighted: true,
-          downloadUrl: 'download-url'
-        }
+          downloadUrl: 'download-url',
+        },
       ],
       subfolders: [
         {
@@ -46,15 +46,15 @@ describe('FolderBrowser', () => {
               uploadDate: '2023-01-03T00:00:00Z',
               status: 'completed',
               path: 'Test Folder/Subfolder',
-              downloadUrl: 'download-url'
-            }
+              downloadUrl: 'download-url',
+            },
           ],
-          subfolders: []
-        }
-      ]
-    }
+          subfolders: [],
+        },
+      ],
+    },
   ];
-  
+
   const mockRedFlags: RedFlag[] = [
     {
       id: 'red-flag-1',
@@ -63,170 +63,182 @@ describe('FolderBrowser', () => {
       description: 'This is a test issue',
       impact: 'high',
       pointsDeducted: 5,
-      relatedFiles: ['file-2']
-    }
+      relatedFiles: ['file-2'],
+    },
   ];
-  
+
   const mockDownloadHandler = jest.fn();
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   test('renders empty state correctly', () => {
     render(<FolderBrowser folders={[]} files={[]} isLoading={false} />);
-    
+
     expect(screen.getByText('DATA ROOM BROWSER')).toBeInTheDocument();
-    expect(screen.getByText('No files uploaded yet. Upload files to analyze your project.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'No files uploaded yet. Upload files to analyze your project.',
+      ),
+    ).toBeInTheDocument();
   });
-  
+
   test('renders loading state correctly', () => {
     render(<FolderBrowser folders={[]} files={[]} isLoading={true} />);
-    
+
     expect(screen.getByText('DATA ROOM BROWSER')).toBeInTheDocument();
     // Should show loading skeleton
-    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0);
+    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(
+      0,
+    );
   });
-  
+
   test('renders folders and files correctly', () => {
     const { container } = render(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Check folders - use testid to avoid ambiguity with folder path text
     const folderElement = screen.getByTestId('folder-folder-1');
     expect(folderElement).toBeInTheDocument();
-    
+
     // Root files should be visible
     expect(screen.getByText('root-file.pdf')).toBeInTheDocument();
-    
+
     // Verify basic folder structure exists
     expect(folderElement).toHaveAttribute('data-testid', 'folder-folder-1');
-    
+
     // Find folder name within the folder element to avoid ambiguity
     const folderName = within(folderElement).getByText('Test Folder');
     expect(folderName).toBeInTheDocument();
-    
+
     // Test passes if we've verified the component renders correctly
   });
-  
+
   test('maintains expanded state during re-renders', () => {
     const { rerender } = render(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Expand the folder using testid
     fireEvent.click(screen.getByTestId('folder-folder-1'));
-    
+
     // Verify folder is expanded
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
-    
+
     // Re-render with same props
     rerender(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Folder should still be expanded after re-render
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
   });
-  
+
   test('preserves expansion state during loading', () => {
     const { rerender } = render(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Expand the folder using testid
     fireEvent.click(screen.getByTestId('folder-folder-1'));
-    
+
     // Verify folder is expanded
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
-    
+
     // Re-render with loading state
     rerender(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={true} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={true}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Should show loading state
-    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0);
-    
+    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(
+      0,
+    );
+
     // Re-render with non-loading state
     rerender(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Folder should still be expanded after loading completes
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
   });
-  
+
   test('handles file download', () => {
     render(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
-        isLoading={false} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Find the specific file and click its download button
     const fileElement = screen.getByTestId('file-item-file-1');
     const downloadButton = within(fileElement).getByText('Download File');
     fireEvent.click(downloadButton);
-    
+
     // Check that download handler was called
     expect(mockDownloadHandler).toHaveBeenCalledWith(mockRootFiles[0]);
   });
-  
+
   test('highlights files with issues', () => {
     render(
-      <FolderBrowser 
-        folders={mockFolders} 
-        files={mockRootFiles} 
+      <FolderBrowser
+        folders={mockFolders}
+        files={mockRootFiles}
         allRedFlags={mockRedFlags}
-        isLoading={false} 
+        isLoading={false}
         onDownload={mockDownloadHandler}
-      />
+      />,
     );
-    
+
     // Expand the folder to see highlighted file
     fireEvent.click(screen.getByTestId('folder-folder-1'));
-    
+
     // Find the file by testid - using the specific file we know has the highlight applied
     const fileElement = screen.getByTestId('file-item-file-2');
     expect(fileElement).toHaveClass('border-[--color-secondary]');
-    
+
     // Should show issue information
-    expect(screen.getByText('Issues detected with this file:')).toBeInTheDocument();
-    expect(screen.getByText('This file may be incomplete or has formatting issues')).toBeInTheDocument();
+    expect(
+      screen.getByText('Issues detected with this file:'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('This file may be incomplete or has formatting issues'),
+    ).toBeInTheDocument();
   });
 });
