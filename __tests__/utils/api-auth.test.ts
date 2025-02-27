@@ -15,11 +15,31 @@ jest.mock('next/server', () => {
   };
 });
 
-// Mock copilotApi
+// Mock copilotApi and token validation
 jest.mock('copilot-node-sdk', () => ({
   copilotApi: jest.fn().mockImplementation(() => ({
     retrieveWorkspace: jest.fn().mockResolvedValue({}),
+    getTokenPayload: jest.fn().mockResolvedValue({
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000) - 60,
+      sub: 'test-user',
+      workspaceId: 'test-workspace',
+    }),
   })),
+}));
+
+// Mock token validation to always return success
+jest.mock('@/utils/token-validation', () => ({
+  validateAndExtractTokenClaims: jest.fn().mockResolvedValue({
+    isValid: true,
+    claims: {
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000) - 60,
+      sub: 'test-user',
+      workspaceId: 'test-workspace',
+    },
+  }),
+  cleanupRateLimitStore: jest.fn(),
 }));
 
 // Create mock request factory function

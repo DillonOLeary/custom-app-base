@@ -23,93 +23,102 @@ describe('API Client', () => {
   });
 
   describe('get function', () => {
-    test('should include token in headers when provided', async () => {
+    test('should include token in query string when provided', async () => {
       // Call get with a token
       await get('/test-url', 'test-token');
 
-      // Check if fetch was called with the correct headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        headers: {
-          'X-Copilot-Token': 'test-token',
-        },
-      });
+      // Check if fetch was called with URL containing token
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('test-url') &&
+          expect.stringContaining('token=test-token'),
+      );
     });
 
-    test('should not include token in headers when not provided', async () => {
+    test('should not include token in query string when not provided', async () => {
       // Call get without a token
       await get('/test-url');
 
-      // Check if fetch was called without token headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        headers: {},
-      });
+      // Check if fetch was called with URL without token
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.not.stringContaining('token='),
+      );
     });
   });
 
   describe('post function', () => {
-    test('should include token in headers when provided', async () => {
+    test('should include token in query string when provided', async () => {
       // Call post with a token
       await post('/test-url', { data: 'test' }, 'test-token');
 
-      // Check if fetch was called with the correct headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Copilot-Token': 'test-token',
-        },
-        body: JSON.stringify({ data: 'test' }),
-      });
+      // Check if fetch was called with the correct URL and body
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('token=test-token'),
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: 'test' }),
+        }),
+      );
     });
 
-    test('should not include token in headers when not provided', async () => {
+    test('should not include token in query string when not provided', async () => {
       // Call post without a token
       await post('/test-url', { data: 'test' });
 
-      // Check if fetch was called without token headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: 'test' }),
-      });
+      // Check if fetch was called without token in URL
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.not.stringContaining('token='),
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: 'test' }),
+        }),
+      );
     });
   });
 
   describe('put function', () => {
-    test('should include token in headers when provided', async () => {
+    test('should include token in query string when provided', async () => {
       // Call put with a token
       await put('/test-url', { data: 'test' }, 'test-token');
 
-      // Check if fetch was called with the correct headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Copilot-Token': 'test-token',
-        },
-        body: JSON.stringify({ data: 'test' }),
-      });
+      // Check if fetch was called with the correct URL and body
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('token=test-token'),
+        expect.objectContaining({
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: 'test' }),
+        }),
+      );
     });
 
-    test('should not include token in headers when not provided', async () => {
+    test('should not include token in query string when not provided', async () => {
       // Call put without a token
       await put('/test-url', { data: 'test' });
 
-      // Check if fetch was called without token headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: 'test' }),
-      });
+      // Check if fetch was called without token in URL
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.not.stringContaining('token='),
+        expect.objectContaining({
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: 'test' }),
+        }),
+      );
     });
   });
 
   describe('postFormData function', () => {
-    test('should include token in headers when provided', async () => {
+    test('should include token in query string when provided', async () => {
       // Create a mock FormData
       const formData = new FormData();
       formData.append(
@@ -121,17 +130,17 @@ describe('API Client', () => {
       // Call postFormData with a token
       await postFormData('/test-url', formData, 'test-token');
 
-      // Check if fetch was called with the correct headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'POST',
-        headers: {
-          'X-Copilot-Token': 'test-token',
-        },
-        body: formData,
-      });
+      // Check if fetch was called with the correct URL and body
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('token=test-token'),
+        expect.objectContaining({
+          method: 'POST',
+          body: formData,
+        }),
+      );
     });
 
-    test('should not include token in headers when not provided', async () => {
+    test('should not include token in query string when not provided', async () => {
       // Create a mock FormData
       const formData = new FormData();
       formData.append(
@@ -143,12 +152,14 @@ describe('API Client', () => {
       // Call postFormData without a token
       await postFormData('/test-url', formData);
 
-      // Check if fetch was called without token headers
-      expect(global.fetch).toHaveBeenCalledWith('/test-url', {
-        method: 'POST',
-        headers: {},
-        body: formData,
-      });
+      // Check if fetch was called without token in URL
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.not.stringContaining('token='),
+        expect.objectContaining({
+          method: 'POST',
+          body: formData,
+        }),
+      );
     });
   });
 });

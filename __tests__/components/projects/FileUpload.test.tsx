@@ -65,7 +65,11 @@ describe('FileUpload', () => {
 
     // Verify API was called
     await waitFor(() => {
-      expect(api.uploadFile).toHaveBeenCalledWith(mockProjectId, mockFile);
+      expect(api.uploadFile).toHaveBeenCalledWith(
+        mockProjectId,
+        mockFile,
+        undefined,
+      );
     });
 
     // Verify callback was called
