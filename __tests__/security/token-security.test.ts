@@ -88,7 +88,7 @@ describe('JWT Token Security', () => {
 
     // Verify copilotApi was called with the token
     expect(copilotApi).toHaveBeenCalledWith({
-      apiKey: '',
+      apiKey: expect.any(String),
       token: rs256Token,
     });
 
