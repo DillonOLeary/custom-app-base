@@ -18,6 +18,9 @@ export function initTestEnvironment(): void {
   // Ensure we have proper environment variables set for tests
   process.env.COPILOT_ENV = 'local';
 
+  // Set test mode flag for components that read from NEXT_PUBLIC_ variables
+  process.env.NEXT_PUBLIC_TEST_MODE = 'true';
+
   // We can't directly set NODE_ENV as it's read-only in TypeScript
   // But we can use this approach to test for it in our components
   if (process.env.NODE_ENV !== 'test') {
@@ -26,7 +29,11 @@ export function initTestEnvironment(): void {
     process.env.NODE_ENV = 'test';
   }
 
-  console.log('Test environment initialized');
+  console.log('Test environment initialized with:', {
+    NODE_ENV: process.env.NODE_ENV,
+    COPILOT_ENV: process.env.COPILOT_ENV,
+    NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+  });
 }
 
 // Initialize the test environment when this module is loaded

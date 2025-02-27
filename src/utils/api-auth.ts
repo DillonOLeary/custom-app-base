@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { copilotApi } from 'copilot-node-sdk';
 import { validateAndExtractTokenClaims } from './token-validation';
+import { shouldSkipSDKValidation } from './environment';
 
 /**
  * Validates the Copilot token from the request and returns the Copilot API client.
@@ -21,14 +22,18 @@ export async function validateToken(
   // Only skip validation during build time, not during runtime
   if (process.env.NEXT_PHASE === 'phase-production-build') {
     // Build-time validation is skipped
+    console.log('Skipping validation during build phase');
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',
     });
     return { copilot, response: null, claims: null };
   }
 
-  // Skip validation in development environment
-  if (process.env.NODE_ENV === 'development') {
+  // Use the centralized environment check function
+  if (shouldSkipSDKValidation()) {
+    console.log(
+      'Running in non-production environment, skipping SDK validation',
+    );
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',
     });
