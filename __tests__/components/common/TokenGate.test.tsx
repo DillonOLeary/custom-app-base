@@ -3,12 +3,23 @@ import { render } from '@testing-library/react';
 import { TokenGate } from '@/components/common/TokenGate';
 import { SearchParams } from '@/app/search-params';
 
+// Mock the environment utility
+jest.mock('@/utils/environment', () => ({
+  isTestOrCIEnvironment: jest.fn(),
+  isProductionEnvironment: jest.fn(),
+}));
+
+// Import the mocked module
+import { isTestOrCIEnvironment } from '@/utils/environment';
+
 describe('TokenGate', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...originalEnv };
+    // Reset mock implementation for each test
+    (isTestOrCIEnvironment as jest.Mock).mockReset();
   });
 
   afterEach(() => {
@@ -16,6 +27,7 @@ describe('TokenGate', () => {
   });
 
   test('renders children when token is present', () => {
+    // Default behavior doesn't matter for this test
     const searchParams: SearchParams = { token: 'test-token' };
     const { getByText } = render(
       <TokenGate searchParams={searchParams}>
@@ -27,10 +39,8 @@ describe('TokenGate', () => {
   });
 
   test('throws error when token is missing and not in development environment', () => {
-    // Mock process.env.NODE_ENV to not be 'development'
-    const originalNodeEnv = process.env.NODE_ENV;
-    // Use Object.defineProperty to override the read-only property
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production' });
+    // Set the mock to return false - not in test or dev environment
+    (isTestOrCIEnvironment as jest.Mock).mockReturnValue(false);
 
     const searchParams: SearchParams = {};
 
@@ -64,15 +74,11 @@ describe('TokenGate', () => {
     }).toThrow('Session Token is required');
 
     consoleErrorMock.mockRestore();
-    // Restore the original NODE_ENV
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 
   test('renders children when token is missing but in development environment', () => {
-    // Mock process.env.NODE_ENV to be 'development'
-    const originalNodeEnv = process.env.NODE_ENV;
-    // Use Object.defineProperty to override the read-only property
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development' });
+    // Set the mock to return true - we're in a test/dev environment
+    (isTestOrCIEnvironment as jest.Mock).mockReturnValue(true);
 
     const searchParams: SearchParams = {};
 
@@ -102,9 +108,6 @@ describe('TokenGate', () => {
       </TokenGate>,
     );
     expect(getByText3('Protected Content')).toBeInTheDocument();
-
-    // Restore the original NODE_ENV
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 
   // Comment out this test as it's failing during mutation testing
@@ -125,9 +128,9 @@ describe('TokenGate', () => {
   // });
 
   test('requires token in production-like environments', () => {
-    // Test with staging environment (should require token)
-    const originalNodeEnv = process.env.NODE_ENV;
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'staging' });
+    // Set the mock to return false - not in test or dev environment
+    (isTestOrCIEnvironment as jest.Mock).mockReturnValue(false);
+
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
 
     expect(() => {
@@ -139,6 +142,5 @@ describe('TokenGate', () => {
     }).toThrow('Session Token is required');
 
     consoleErrorMock.mockRestore();
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 });
