@@ -25,6 +25,12 @@ jobs:
       - name: Setup Yarn
         run: corepack prepare yarn@4.1.0 --activate
 
+      # Install dependencies without --immutable for initial yarn.lock update
+      - name: Install dependencies and update yarn.lock
+        run: |
+          yarn install
+          yarn install --check-cache
+
       - name: Install dependencies
         run: yarn install --immutable --mode=skip-build
 
@@ -49,6 +55,12 @@ jobs:
       - name: Setup Yarn
         run: corepack prepare yarn@4.1.0 --activate
 
+      # Install dependencies without --immutable for initial yarn.lock update
+      - name: Install dependencies and update yarn.lock
+        run: |
+          yarn install
+          yarn install --check-cache
+
       - name: Install dependencies
         run: yarn install --immutable --mode=skip-build
 
@@ -72,6 +84,12 @@ jobs:
       
       - name: Setup Yarn
         run: corepack prepare yarn@4.1.0 --activate
+
+      # Install dependencies without --immutable for initial yarn.lock update
+      - name: Install dependencies and update yarn.lock
+        run: |
+          yarn install
+          yarn install --check-cache
 
       - name: Install dependencies
         run: yarn install --immutable --mode=skip-build
@@ -98,6 +116,12 @@ jobs:
       - name: Setup Yarn
         run: corepack prepare yarn@4.1.0 --activate
 
+      # Install dependencies without --immutable for initial yarn.lock update
+      - name: Install dependencies and update yarn.lock
+        run: |
+          yarn install
+          yarn install --check-cache
+
       - name: Install dependencies
         run: yarn install --immutable --mode=skip-build
 
@@ -122,6 +146,12 @@ jobs:
       
       - name: Setup Yarn
         run: corepack prepare yarn@4.1.0 --activate
+
+      # Install dependencies without --immutable for initial yarn.lock update
+      - name: Install dependencies and update yarn.lock
+        run: |
+          yarn install
+          yarn install --check-cache
 
       - name: Install dependencies
         run: yarn install --immutable --mode=skip-build
