@@ -416,8 +416,10 @@ export const getMockProjectDetails = (
         analysisResult.categoryScores.flatMap((cat) => cat.redFlags),
       );
 
+      // Make sure the project's score matches the analysisResult's totalScore
       return {
         ...project,
+        score: analysisResult.totalScore, // Ensure consistency
         analysisResult,
         files,
         folders,
