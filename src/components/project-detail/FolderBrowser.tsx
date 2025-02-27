@@ -210,10 +210,9 @@ export function FolderBrowser({
           </svg>
         </div>
 
-        {/* Always render the content div but conditionally show content to prevent layout shift */}
+        {/* Always render the content div but conditionally show content */}
         <div
-          className={`ml-4 pl-2 border-l-2 border-[--color-bg-1] overflow-hidden transition-all duration-200
-                      ${isExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'}`}
+          className={`ml-4 pl-2 border-l-2 border-[--color-bg-1] ${isExpanded ? 'block' : 'hidden'}`}
         >
           {/* Render subfolders first */}
           {folder.subfolders.map((subfolder) =>
