@@ -1,6 +1,6 @@
 # README for Custom App Base
 
-[![PR Checks](https://github.com/DillonOLeary/custom-app-base/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/DillonOLeary/custom-app-base/actions/workflows/pr-checks.yml)
+[![CI Pipeline](https://github.com/DillonOLeary/custom-app-base/actions/workflows/main-ci-pipeline.yml/badge.svg)](https://github.com/DillonOLeary/custom-app-base/actions/workflows/main-ci-pipeline.yml)
 
 This repository is a starting point for [Copilot Apps](https://www.copilot.com/apps). It is built using using [Next.js](https://nextjs.org/) and was bootstrapped with [create-next-app](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
@@ -55,13 +55,20 @@ The Content Security Policy in the custom app base should be configured in `src/
 
 ### Continuous Integration
 
-This repository includes GitHub Actions workflows that automatically run checks when PRs are created or when code is pushed to the main branch:
+This repository uses GitHub Actions for CI/CD with a sequential workflow pipeline:
 
-- **Linting**: Ensures code adheres to ESLint rules
-- **Type Checking**: Validates TypeScript types
-- **Format Checking**: Verifies code formatting with Prettier
-- **Testing**: Runs Jest tests
-- **Build**: Confirms the application builds correctly
+1. **Parallel Validation** (runs simultaneously):
+   - **Linting**: Ensures code adheres to ESLint rules
+   - **Type Checking**: Validates TypeScript types
+   - **Format Checking**: Verifies code formatting with Prettier
+
+2. **Testing** (runs after validation passes):
+   - Runs Jest tests to verify application behavior
+
+3. **Build Verification** (runs after tests pass):
+   - Confirms the application builds correctly for production
+
+This sequential pipeline ensures that tests only run if the code passes all validation checks, and the build verification only runs if tests pass. This optimizes the workflow by failing fast when there are issues.
 
 You can run these checks locally with:
 
@@ -80,4 +87,7 @@ yarn test
 
 # Build check
 yarn build
+
+# Format code (fixes formatting issues)
+yarn format
 ```
