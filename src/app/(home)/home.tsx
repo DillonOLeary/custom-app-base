@@ -16,7 +16,10 @@ export default async function Home({
   searchParams: SearchParams;
 }) {
   // Skip SDK validation in test mode completely
-  if (process.env.NODE_ENV === 'test') {
+  if (
+    process.env.NODE_ENV === 'test' ||
+    process.env.NEXT_PUBLIC_TEST_MODE === 'true'
+  ) {
     console.log('Running in test mode, skipping SDK validation');
   } else {
     // Setup Copilot API client (server-side)
