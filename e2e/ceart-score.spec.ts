@@ -34,8 +34,11 @@ test.describe('CEARTscore consistency and folder structure tests', () => {
     await expect(page.getByText('DESERT SUN SOLAR FARM')).toBeVisible();
 
     // Check the score in the project header
-    // The header contains CEARTscore: and then an element with the score
-    await expect(page.getByText('CEARTscore:')).toBeVisible();
+    // Use a more specific selector to find the CEARTscore in the project detail header
+    // The score is in a rounded-full container
+    await expect(
+      page.locator('.rounded-full', { hasText: 'CEARTscore:' }),
+    ).toBeVisible();
 
     // Wait a bit for the score to be visible
     await page.waitForTimeout(1000);
@@ -90,8 +93,11 @@ test.describe('CEARTscore consistency and folder structure tests', () => {
     await expect(page.getByText('GEOTHERMAL SPRINGS PLANT')).toBeVisible();
 
     // Check the score in the project header
-    // The header contains CEARTscore: and then an element with the score
-    await expect(page.getByText('CEARTscore:')).toBeVisible();
+    // Use a more specific selector to find the CEARTscore in the project detail header
+    // The score is in a rounded-full container
+    await expect(
+      page.locator('.rounded-full', { hasText: 'CEARTscore:' }),
+    ).toBeVisible();
 
     // Wait a bit for the score to be visible
     await page.waitForTimeout(1000);
