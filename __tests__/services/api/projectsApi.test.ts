@@ -21,12 +21,15 @@ jest.mock('@/services/api/apiClient', () => ({
   postFormData: jest.fn(),
 }));
 
-// Mock console to prevent log noise during testing
-jest.spyOn(console, 'log').mockImplementation(() => {});
-jest.spyOn(console, 'error').mockImplementation(() => {});
-
 // Mock setTimeout to make tests run immediately
 jest.useFakeTimers();
+
+// Setup before each test
+beforeEach(() => {
+  // Mock console to prevent log noise during testing
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
 
 describe('Projects API', () => {
   beforeEach(() => {
