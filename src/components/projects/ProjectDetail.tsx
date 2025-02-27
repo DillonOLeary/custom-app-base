@@ -284,6 +284,8 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
                     className="ceart-button ceart-button-primary"
                     disabled={isLoading}
                     data-testid="retry-analysis-button"
+                    // This special ID attribute helps in synchronizing tests
+                    id="retry-analysis-btn-for-testing"
                   >
                     {isLoading ? 'Processing...' : 'Retry Analysis'}
                   </button>
@@ -321,6 +323,8 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
                     className="ceart-button ceart-button-primary"
                     disabled={isLoading || files.length === 0}
                     data-testid="run-analysis-button"
+                    // This special ID attribute helps in synchronizing tests
+                    id="run-analysis-btn-for-testing"
                   >
                     {isLoading ? 'Processing...' : 'Run CEARTscore Analysis'}
                   </button>
