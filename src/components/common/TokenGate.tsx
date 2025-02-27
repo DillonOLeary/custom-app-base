@@ -7,8 +7,8 @@ export function TokenGate({
   children: React.ReactNode;
   searchParams: SearchParams;
 }) {
-  // Token is required in all environments unless in local development mode
-  if (!searchParams.token && process.env.COPILOT_ENV !== 'local') {
+  // Token is required in all environments unless in development mode
+  if (!searchParams.token && process.env.NODE_ENV !== 'development') {
     throw new Error(
       'Session Token is required, guide available at: https://docs.copilot.com/docs/custom-apps-setting-up-the-sdk#session-tokens',
     );

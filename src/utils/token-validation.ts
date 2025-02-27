@@ -175,7 +175,6 @@ export async function validateAndExtractTokenClaims(
       claims,
     };
   } catch (error) {
-    console.error('Token validation error:', error);
     return {
       isValid: false,
       error: `Token validation failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -223,10 +222,6 @@ export function cleanupRateLimitStore(): void {
   // If store is still too large, enforce size limit
   const currentSize = Object.keys(rateLimitStore).length;
   if (currentSize > MAX_STORE_SIZE) {
-    console.warn(
-      `Rate limit store exceeded maximum size (${currentSize}/${MAX_STORE_SIZE}), cleaning up oldest entries`,
-    );
-
     // Get all entries, sorted by reset time (oldest first)
     const entries = Object.entries(rateLimitStore).sort(
       (a, b) => a[1].resetAt - b[1].resetAt,

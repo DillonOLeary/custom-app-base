@@ -43,7 +43,7 @@ export function FileUpload({
         onUploadComplete(uploadedFile);
       } catch (err) {
         setError('Failed to upload file. Please try again.');
-        console.error('File upload error:', err);
+        // Error is already handled via the UI
       } finally {
         setIsUploading(false);
       }

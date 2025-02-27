@@ -34,7 +34,6 @@ export async function get<T>(url: string, token?: string): Promise<T> {
     const response = await fetch(urlObj.toString());
     return await handleApiResponse<T>(response);
   } catch (error) {
-    console.error(`GET request failed for ${url}:`, error);
     throw error;
   }
 }
@@ -66,7 +65,6 @@ export async function post<T, D = unknown>(
 
     return await handleApiResponse<T>(response);
   } catch (error) {
-    console.error(`POST request failed for ${url}:`, error);
     throw error;
   }
 }
@@ -98,7 +96,6 @@ export async function put<T, D = unknown>(
 
     return await handleApiResponse<T>(response);
   } catch (error) {
-    console.error(`PUT request failed for ${url}:`, error);
     throw error;
   }
 }
@@ -125,7 +122,6 @@ export async function postFormData<T>(
 
     return await handleApiResponse<T>(response);
   } catch (error) {
-    console.error(`POST form data request failed for ${url}:`, error);
     throw error;
   }
 }

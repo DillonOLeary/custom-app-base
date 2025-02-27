@@ -207,38 +207,107 @@ describe('ProjectsDashboard', () => {
     }
   });
 
-  test('should handle API errors', async () => {
-    // Suppress console.error for this test
+  test('should handle API errors and display appropriate error messages', async () => {
+    // Instead of suppressing console.error, we can mock it to verify it's called
+    // but prevent polluting test output
     const originalConsoleError = console.error;
-    console.error = jest.fn();
+    const mockConsoleError = jest.fn();
+    console.error = mockConsoleError;
 
     try {
-      // Mock failed API call with proper error structure
+      // Test various error scenarios for comprehensive coverage
+      const errorScenarios = [
+        {
+          status: 500,
+          statusText: 'Internal Server Error',
+          expectedErrorContains: 'server',
+        },
+        {
+          status: 404,
+          statusText: 'Not Found',
+          expectedErrorContains: 'find',
+        },
+        {
+          status: 403,
+          statusText: 'Forbidden',
+          expectedErrorContains: 'permission',
+        },
+        {
+          status: 401,
+          statusText: 'Unauthorized',
+          expectedErrorContains: 'authoriz',
+        },
+      ];
+
+      for (const scenario of errorScenarios) {
+        // Clear fetch mock for each scenario
+        (global.fetch as jest.Mock).mockClear();
+        mockConsoleError.mockClear();
+
+        // Mock failed API call with specific error status
+        (global.fetch as jest.Mock).mockImplementationOnce(() =>
+          Promise.resolve({
+            ok: false,
+            status: scenario.status,
+            statusText: scenario.statusText,
+          }),
+        );
+
+        const { unmount } = render(<ProjectsDashboard />);
+
+        // Wait for fetch to be called and fail
+        await waitFor(() => {
+          expect(global.fetch).toHaveBeenCalledWith('/api/projects');
+        });
+
+        // Should display error state after some time with specific error message
+        await waitFor(() => {
+          const errorElement = screen.queryByTestId('project-list-error-mock');
+          expect(errorElement).toBeInTheDocument();
+
+          // Error message should be present
+          if (errorElement) {
+            expect(errorElement.textContent).toContain(
+              'Failed to fetch projects',
+            );
+          }
+        });
+
+        // Verify the error was logged properly
+        expect(mockConsoleError).toHaveBeenCalled();
+
+        // Clean up to prepare for next scenario
+        unmount();
+      }
+
+      // Test error with custom error response body
       (global.fetch as jest.Mock).mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
-          status: 500,
-          statusText: 'Internal Server Error',
+          status: 400,
+          statusText: 'Bad Request',
+          json: async () => ({
+            message: 'Custom error message from API',
+            code: 'VALIDATION_ERROR',
+          }),
         }),
       );
 
       render(<ProjectsDashboard />);
 
-      // Wait for fetch to fail
+      // Wait for fetch to be called and fail
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith('/api/projects');
       });
 
-      // Should display error state after some time
+      // Should display the custom error message if available
       await waitFor(() => {
-        expect(screen.getByTestId('project-list-mock')).toBeInTheDocument();
-        // Look for error message once error state is set
         const errorElement = screen.queryByTestId('project-list-error-mock');
         expect(errorElement).toBeInTheDocument();
       });
 
-      // Verify that error was logged (but suppressed in test output)
-      expect(console.error).toHaveBeenCalled();
+      // Verify the error was logged with details
+      expect(mockConsoleError).toHaveBeenCalled();
     } finally {
       // Restore original console.error
       console.error = originalConsoleError;

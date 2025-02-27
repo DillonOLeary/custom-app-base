@@ -26,9 +26,9 @@ describe('TokenGate', () => {
     expect(getByText('Protected Content')).toBeInTheDocument();
   });
 
-  test('throws error when token is missing and not in local environment', () => {
-    // Mock process.env.COPILOT_ENV to not be 'local'
-    process.env.COPILOT_ENV = 'production';
+  test('throws error when token is missing and not in development environment', () => {
+    // Mock process.env.NODE_ENV to not be 'development'
+    process.env.NODE_ENV = 'production';
 
     const searchParams: SearchParams = {};
 
@@ -46,9 +46,9 @@ describe('TokenGate', () => {
     consoleErrorMock.mockRestore();
   });
 
-  test('renders children when token is missing but in local environment', () => {
-    // Mock process.env.COPILOT_ENV to be 'local'
-    process.env.COPILOT_ENV = 'local';
+  test('renders children when token is missing but in development environment', () => {
+    // Mock process.env.NODE_ENV to be 'development'
+    process.env.NODE_ENV = 'development';
 
     const searchParams: SearchParams = {};
     const { getByText } = render(

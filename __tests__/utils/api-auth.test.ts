@@ -98,15 +98,7 @@ describe('API Authentication', () => {
     expect(response?.status).toBe(401);
   });
 
-  test('skips validation in local environment', async () => {
-    process.env.COPILOT_ENV = 'local';
-    const request = createMockRequest();
-    const { copilot, response } = await validateToken(request);
-
-    // Should return copilot client and no error response
-    expect(copilot).toBeTruthy();
-    expect(response).toBeNull();
-  });
+  // Removed the obsolete test for COPILOT_ENV
 
   test('skips validation in development environment', async () => {
     // Using Object.defineProperty to modify read-only property for testing

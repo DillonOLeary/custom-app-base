@@ -20,18 +20,15 @@ export async function validateToken(
 ) {
   // Only skip validation during build time, not during runtime
   if (process.env.NEXT_PHASE === 'phase-production-build') {
-    console.log('Running in build phase - skipping token validation');
+    // Build-time validation is skipped
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',
     });
     return { copilot, response: null, claims: null };
   }
 
-  // Regular development environment check
-  if (
-    process.env.COPILOT_ENV === 'local' ||
-    process.env.NODE_ENV === 'development'
-  ) {
+  // Skip validation in development environment
+  if (process.env.NODE_ENV === 'development') {
     const copilot = copilotApi({
       apiKey: process.env.COPILOT_API_KEY || '',
     });
@@ -59,7 +56,7 @@ export async function validateToken(
       const url = new URL(request.url);
       token = url.searchParams.get('token');
     } catch (e) {
-      console.error('Error parsing URL:', e);
+      // URL parsing error - token will remain null
     }
   }
 
@@ -114,7 +111,6 @@ export async function validateToken(
       response: null,
     };
   } catch (error) {
-    console.error('API client creation error:', error);
     return {
       copilot: null,
       claims: null,
