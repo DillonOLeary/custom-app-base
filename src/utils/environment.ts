@@ -51,6 +51,19 @@ export function shouldSkipSDKValidation(): boolean {
 
     // Check for browser-side test flags (for e2e tests)
     if (typeof window !== 'undefined') {
+      // Special case for security tests - check if we're in security test mode
+      if ((window as any).SECURITY_TEST_MODE === true) {
+        console.log(
+          'Security test mode detected - NOT skipping SDK validation',
+        );
+        // Check if the page has provided a shouldSkipSDKValidation override
+        if (typeof (window as any).__shouldSkipSDKValidation === 'function') {
+          return (window as any).__shouldSkipSDKValidation();
+        }
+        return false;
+      }
+
+      // Normal test mode detection
       if (
         (window as any).__TEST_MODE__ === true ||
         (window as any).__COPILOT_ENV__ === 'local'
