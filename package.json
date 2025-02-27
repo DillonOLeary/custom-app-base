@@ -17,7 +17,10 @@
     "prepare": "husky",
     "pre-commit": "lint-staged",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:mutation": "stryker run",
+    "test:mutation:utils": "stryker run --mutate 'src/utils/**/*.ts'",
+    "test:mutation:services": "stryker run --mutate 'src/services/**/*.ts'"
   },
   "dependencies": {
     "caniuse-lite": "^1.0.30001701",
@@ -35,6 +38,8 @@
   "devDependencies": {
     "@ngrok/ngrok": "^1.4.1",
     "@playwright/test": "^1.50.1",
+    "@stryker-mutator/core": "^8.7.1",
+    "@stryker-mutator/jest-runner": "^8.7.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",

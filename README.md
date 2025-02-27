@@ -2,7 +2,7 @@
 
 [![CI Pipeline](https://github.com/DillonOLeary/custom-app-base/actions/workflows/main-ci-pipeline.yml/badge.svg)](https://github.com/DillonOLeary/custom-app-base/actions/workflows/main-ci-pipeline.yml)
 
-This repository is a starting point for [Copilot Apps](https://www.copilot.com/apps). It is built using using [Next.js](https://nextjs.org/) and was bootstrapped with [create-next-app](https://nextjs.org/docs/pages/api-reference/create-next-app).
+This repository is a starting point for [Copilot Apps](https://www.copilot.com/apps). It is built using using [Next.js](https://nextjs.org/) and was bootstrapped with [create-next-app](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ### Benefits
 
@@ -10,7 +10,7 @@ Copilot Apps can be embedded in your internal dashboard and client portal and th
 
 ### Prerequisites
 
-In order to build a Copilot custom app you’ll need a knowledge of modern web development. Here are some of the tools you’ll encounter in this repository:
+In order to build a Copilot custom app you'll need a knowledge of modern web development. Here are some of the tools you'll encounter in this repository:
 
 - Node.JS
 - React
@@ -23,7 +23,7 @@ The easiest way to get started is to fork this repo. Once forked, you will need 
 
 **Deploying and Configuring App**
 
-The easiest way to deploy this custom app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+The easiest way to deploy this custom app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
 - Create a new project in your Vercel account. Note: create an account if you don't have one using github to automatically import repos.
 - Select the forked repo in Import Git Repository
@@ -45,9 +45,33 @@ yarn install
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000/) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000/) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+### Testing
+
+**Run unit tests**
+
+```
+yarn test
+```
+
+**Run E2E tests**
+
+```
+yarn test:e2e
+```
+
+**Run mutation tests**
+
+Mutation testing helps verify the quality of your test suite by making small changes to your code and ensuring tests catch these changes.
+
+```
+yarn test:mutation        # Run mutation tests on all configured files
+yarn test:mutation:utils  # Run mutation tests only on utility functions
+yarn test:mutation:services # Run mutation tests only on services
+```
 
 ### Content Security Policy
 
@@ -57,99 +81,25 @@ The Content Security Policy in the custom app base should be configured in `src/
 
 This repository uses GitHub Actions for CI/CD with a sequential workflow pipeline:
 
-1. **Parallel Validation** (runs simultaneously):
+1. **Install** - Sets up Node.js and installs dependencies
+2. **Format Check** - Ensures code follows Prettier formatting guidelines
+3. **Lint** - Runs ESLint to catch code quality issues and potential bugs
+4. **Type Check** - Verifies TypeScript type correctness
+5. **Test** - Executes unit tests with Jest
+6. **Build** - Builds the Next.js application for production
+7. **E2E Test** - Runs end-to-end tests with Playwright
 
-   - **Linting**: Ensures code adheres to ESLint rules
-   - **Type Checking**: Validates TypeScript types
-   - **Format Checking**: Verifies code formatting with Prettier
+### Local Development
 
-2. **Testing** (runs after validation passes):
+For local development, you'll need a valid COPILOT_API_KEY in your `.env.local` file.
 
-   - Runs Jest tests to verify application behavior
-
-3. **Build Verification** (runs after tests pass):
-   - Confirms the application builds correctly for production
-
-This sequential pipeline ensures that tests only run if the code passes all validation checks, and the build verification only runs if tests pass. This optimizes the workflow by failing fast when there are issues.
-
-Additionally, the repository uses separate workflows for:
-
-1. **Vercel Deployment Tests**: Runs unit tests and build verification for production deployments
-2. **End-to-End Tests**: Runs Playwright tests against the application UI
-
-The end-to-end tests are only run in the CI environment (GitHub Actions) and during development, but not in the production deployment to avoid issues with dependencies like Playwright.
-
-You can run these checks locally with:
-
-```bash
-# Lint check
-yarn lint
-
-# Type check
-yarn tsc --noEmit
-
-# Format check
-yarn format:check
-
-# Unit tests
-yarn test
-
-# End-to-end tests (requires Playwright)
-yarn test:e2e
-
-# Build check
-yarn build
-
-# Format code (fixes formatting issues)
-yarn format
+```
+COPILOT_API_KEY=sk_...
 ```
 
-### Dependency Management
+### Learn More
 
-This repository uses Dependabot to automatically keep dependencies up to date:
+To learn more about Next.js, take a look at the following resources:
 
-- **Weekly Updates**: Dependabot checks for npm dependency updates every Monday
-- **Security Patches**: Security updates are prioritized
-- **Grouped Updates**: Minor and patch updates are grouped into single PRs
-- **GitHub Actions**: GitHub Actions workflows are also kept up to date (monthly)
-
-Additionally, Renovate Bot is configured as an alternative:
-
-- **Weekend Updates**: Renovate is configured to run on weekends
-- **Automerge**: Minor/patch updates and dev dependencies can be automatically merged
-
-### Repository Structure
-
-#### Essential Files and Directories
-
-- **Configuration Files**:
-
-  - `package.json`, `yarn.lock` - Project dependencies
-  - `next.config.js` - Next.js configuration
-  - `tsconfig.json` - TypeScript configuration
-  - `postcss.config.js`, `tailwind.config.ts` - CSS and styling configuration
-  - `prettier.config.js`, `.eslintrc.json` - Code style and linting
-  - `jest.config.js`, `jest.setup.js` - Testing configuration
-
-- **Source Code**:
-
-  - `/src` - Application source code
-  - `/public` - Static assets
-  - `/__tests__` - Unit test files
-  - `/e2e` - End-to-end test files with Playwright
-
-- **Build Tools and Git**:
-  - `/.husky` - Git hooks configuration
-  - `/.github` - GitHub workflows and configuration
-
-#### Generated/Build Files (not committed)
-
-The following files are generated during development and build processes and should not be committed:
-
-- `/.next` - Next.js build directory
-- `*.tsbuildinfo` - TypeScript incremental build info
-- `/coverage` - Test coverage reports
-- `/playwright-report` - Playwright test reports
-- `/test-results` - Playwright test results
-- `/e2e/results` - Playwright test screenshots
-- `.env*.local` - Local environment variables
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
