@@ -4,7 +4,7 @@ import { test, expect, Page } from '@playwright/test';
  * These tests focus on file management capabilities within projects,
  * including uploading files, organizing them, and verifying browser display.
  */
-// Skipping all file management tests due to issues with file uploads in the test environment
+// Working with files in tests is challenging, so let's skip for now - can be enabled incrementally
 test.describe.skip('File management tests', () => {
   // Common setup to go to a specific project
   async function goToProjectPage(page: Page, projectId: string) {

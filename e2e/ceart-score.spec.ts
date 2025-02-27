@@ -4,7 +4,7 @@ import { test, expect, Page } from '@playwright/test';
  * These tests verify the consistency of CEARTscore between dashboard and project details
  * and proper folder structure display for each project.
  */
-test.describe.skip('CEARTscore consistency and folder structure tests', () => {
+test.describe('CEARTscore consistency and folder structure tests', () => {
   // Common test function to check score consistency
   const testScoreConsistency = async (
     page: Page,
