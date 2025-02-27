@@ -47,11 +47,21 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
       return window.mockCopilotSdk;
     };
     
+    // Also make process.env.NODE_ENV return 'test' in browser context
+    if (!window.process) {
+      window.process = {};
+    }
+    if (!window.process.env) {
+      window.process.env = {};
+    }
+    window.process.env.NODE_ENV = 'test';
+    window.process.env.NEXT_PUBLIC_TEST_MODE = 'true';
+    
     console.log('[Mock] Copilot SDK mock injected into browser');
   `;
 
   // Add the script to the page before it loads
   await page.addInitScript(sdkMockScript);
-  
+
   console.log('SDK mocks injected into browser');
 }

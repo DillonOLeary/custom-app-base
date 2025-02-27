@@ -42,12 +42,44 @@ const mockResponses = {
     id: 'test-workspace-id',
     name: 'Test Workspace',
     owner: 'test-user-id',
-  }
+  },
 };
 
-// Store original implementations
-const originalModule = jest.requireActual('copilot-node-sdk');
 let sdkMockEnabled = false;
+
+/**
+ * Simple mock function implementation for Playwright tests
+ * which don't have access to Jest's mocking utilities
+ */
+function createMockFunction() {
+  const fn = function (...args: any[]) {
+    fn.calls.push(args);
+    if (fn.implementation) {
+      return fn.implementation(...args);
+    }
+    return undefined;
+  };
+
+  fn.calls = [] as any[][];
+  fn.implementation = null as any;
+
+  fn.mockImplementation = function (impl: any) {
+    fn.implementation = impl;
+    return fn;
+  };
+
+  fn.mockResolvedValue = function (value: any) {
+    fn.implementation = () => Promise.resolve(value);
+    return fn;
+  };
+
+  fn.mockReturnValue = function (value: any) {
+    fn.implementation = () => value;
+    return fn;
+  };
+
+  return fn;
+}
 
 /**
  * Setup Copilot SDK mocks for testing
@@ -57,17 +89,24 @@ export function setupSdkMocks() {
   if (typeof window !== 'undefined') {
     // Mock the SDK in the browser environment
     sdkMockEnabled = true;
-    
-    // Mock the copilotApi function
-    (window as any).copilotApi = jest.fn().mockImplementation(() => ({
-      retrieveWorkspace: jest.fn().mockResolvedValue(mockResponses.workspace),
-      getTokenPayload: jest.fn().mockResolvedValue(mockResponses.tokenPayload),
-      // Add other methods as needed
-      getProjects: jest.fn().mockResolvedValue(mockResponses.projects),
-      getProjectById: jest.fn().mockImplementation((id) => {
-        return Promise.resolve(mockResponses.projects.find(p => p.id === id) || null);
+
+    // Create the mock implementation for use in Playwright tests
+    const mockSdk = {
+      retrieveWorkspace: createMockFunction().mockResolvedValue(
+        mockResponses.workspace,
+      ),
+      getTokenPayload: createMockFunction().mockResolvedValue(
+        mockResponses.tokenPayload,
+      ),
+      getProjects: createMockFunction().mockResolvedValue(
+        mockResponses.projects,
+      ),
+      getProjectById: createMockFunction().mockImplementation((id: string) => {
+        return Promise.resolve(
+          mockResponses.projects.find((p) => p.id === id) || null,
+        );
       }),
-      createProject: jest.fn().mockImplementation((project) => {
+      createProject: createMockFunction().mockImplementation((project: any) => {
         const newProject = {
           id: `new-${Date.now()}`,
           ...project,
@@ -75,33 +114,15 @@ export function setupSdkMocks() {
         };
         return Promise.resolve(newProject);
       }),
-    }));
-  }
-  
-  // For server-side (Node.js) environment
-  if (typeof jest !== 'undefined') {
-    jest.mock('copilot-node-sdk', () => {
-      return {
-        ...originalModule,
-        copilotApi: () => ({
-          retrieveWorkspace: jest.fn().mockResolvedValue(mockResponses.workspace),
-          getTokenPayload: jest.fn().mockResolvedValue(mockResponses.tokenPayload),
-          // Add other methods as needed
-          getProjects: jest.fn().mockResolvedValue(mockResponses.projects),
-          getProjectById: jest.fn().mockImplementation((id) => {
-            return Promise.resolve(mockResponses.projects.find(p => p.id === id) || null);
-          }),
-          createProject: jest.fn().mockImplementation((project) => {
-            const newProject = {
-              id: `new-${Date.now()}`,
-              ...project,
-              status: 'pending',
-            };
-            return Promise.resolve(newProject);
-          }),
-        }),
-      };
-    });
+    };
+
+    // Mock the copilotApi function
+    const mockCopilotApi = createMockFunction().mockImplementation(
+      () => mockSdk,
+    );
+    (window as any).copilotApi = mockCopilotApi;
+
+    console.log('[Mock] Copilot SDK mock initialized for browser');
   }
 
   console.log('Copilot SDK mocks initialized for testing');
