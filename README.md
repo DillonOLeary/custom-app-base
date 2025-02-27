@@ -107,3 +107,35 @@ Additionally, Renovate Bot is configured as an alternative:
 
 - **Weekend Updates**: Renovate is configured to run on weekends
 - **Automerge**: Minor/patch updates and dev dependencies can be automatically merged
+
+### Repository Structure
+
+#### Essential Files and Directories
+
+- **Configuration Files**:
+
+  - `package.json`, `yarn.lock` - Project dependencies
+  - `next.config.js` - Next.js configuration
+  - `tsconfig.json` - TypeScript configuration
+  - `postcss.config.js`, `tailwind.config.ts` - CSS and styling configuration
+  - `prettier.config.js`, `.eslintrc.json` - Code style and linting
+  - `jest.config.js`, `jest.setup.js` - Testing configuration
+
+- **Source Code**:
+
+  - `/src` - Application source code
+  - `/public` - Static assets
+  - `/__tests__` - Test files
+
+- **Build Tools and Git**:
+  - `/.husky` - Git hooks configuration
+  - `/.github` - GitHub workflows and configuration
+
+#### Generated/Build Files (not committed)
+
+The following files are generated during development and build processes and should not be committed:
+
+- `/.next` - Next.js build directory
+- `*.tsbuildinfo` - TypeScript incremental build info
+- `/coverage` - Test coverage reports
+- `.env*.local` - Local environment variables
