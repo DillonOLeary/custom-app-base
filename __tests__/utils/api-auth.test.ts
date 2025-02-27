@@ -109,12 +109,24 @@ describe('API Authentication', () => {
   });
 
   test('skips validation in development environment', async () => {
-    process.env.NODE_ENV = 'development';
+    // Using Object.defineProperty to modify read-only property for testing
+    const originalNodeEnv = process.env.NODE_ENV;
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'development',
+      configurable: true,
+    });
+
     const request = createMockRequest();
     const { copilot, response } = await validateToken(request);
 
     // Should return copilot client and no error response
     expect(copilot).toBeTruthy();
     expect(response).toBeNull();
+
+    // Restore the original NODE_ENV
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: originalNodeEnv,
+      configurable: true,
+    });
   });
 });
