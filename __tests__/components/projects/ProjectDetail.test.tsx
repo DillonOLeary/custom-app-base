@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
 import { mockProject } from '../../support/testUtils';
 import * as api from '@/services/api';
+import { Project } from '@/types/project';
 
 // Mock the API functions
 jest.mock('@/services/api', () => ({
@@ -175,128 +176,113 @@ describe('ProjectDetail', () => {
     expect(screen.getByText('UPLOAD PROJECT FILES')).toBeInTheDocument();
   });
 
-  // Skip this test in CI as it's flaky there but works locally
-  test.skip('runs analysis when button is clicked', async () => {
-    // Mock the API methods using jest.spyOn instead of direct assignment
+  test('runs analysis when run button is clicked', async () => {
+    // Mock the API methods with jest.spyOn
     const mockRunAnalysis = jest
       .spyOn(api, 'runAnalysis')
-      .mockImplementation(() => Promise.resolve({} as any));
+      .mockResolvedValue({} as any);
 
-    // Setup mocks with a pending project that has files but no analysis
-    const pendingProject = {
+    // Setup mocks with a pending project that has files
+    const pendingProject: Project = {
       ...mockProject,
       analysisResult: undefined,
       status: 'pending',
     };
 
-    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
-    mockGetProjectDetails.mockResolvedValue(pendingProject);
+    jest
+      .spyOn(api, 'getProjectDetails')
+      .mockResolvedValueOnce(pendingProject) // First call
+      .mockResolvedValueOnce({
+        // Second call after analysis
+        ...pendingProject,
+        status: 'analyzing',
+      } as Project);
 
-    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
-    mockGetProjectFiles.mockResolvedValue(mockProject.files);
+    jest
+      .spyOn(api, 'getProjectFiles')
+      .mockResolvedValue(mockProject.files || []);
 
     render(<ProjectDetail projectId="test-id" />);
 
-    // Wait for data loading to complete and button to be available
-    await waitFor(
-      () => {
-        expect(screen.getByTestId('run-analysis-button')).toBeInTheDocument();
-      },
-      { timeout: 5000 },
-    );
+    // Wait for loading to complete and run button to appear
+    const runButton = await screen.findByTestId('run-analysis-button');
 
-    // Make sure runAnalysis is clear before we click the button
+    // Verify button is present with the right text
+    expect(runButton).toHaveTextContent('Run CEARTscore Analysis');
+
+    // Make sure runAnalysis hasn't been called yet
     expect(mockRunAnalysis).not.toHaveBeenCalled();
 
-    // Click the run analysis button - use querySelector for better targeting
-    const button = document.getElementById('run-analysis-btn-for-testing');
-    if (!button) {
-      throw new Error('Run analysis button not found');
-    }
+    // Click the button
+    fireEvent.click(runButton);
 
-    // Use vanilla JS click for better browser compatibility
-    button.click();
+    // Verify API was called with the correct project ID
+    await waitFor(() => {
+      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    });
 
-    // Use a longer timeout for the async operations
-    await waitFor(
-      () => {
-        expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
-      },
-      { timeout: 5000 },
-    );
+    // Project details should be refreshed
+    await waitFor(() => {
+      expect(api.getProjectDetails).toHaveBeenCalledTimes(2);
+    });
 
-    // Should call getProjectDetails again to refresh data
-    await waitFor(
-      () => {
-        expect(mockGetProjectDetails).toHaveBeenCalledTimes(2);
-      },
-      { timeout: 5000 },
-    );
-
-    // Restore the original implementation
+    // Clean up
     mockRunAnalysis.mockRestore();
   });
 
-  // Skip this test in CI as it's flaky there but works locally
-  test.skip('retries analysis for failed projects', async () => {
-    // Mock the API methods using jest.spyOn instead of direct assignment
+  test('retries analysis for failed projects', async () => {
+    // Use jest.spyOn instead of direct mock assignment
     const mockRunAnalysis = jest
       .spyOn(api, 'runAnalysis')
-      .mockImplementation(() => Promise.resolve({} as any));
+      .mockResolvedValue({} as any);
 
     // Setup mocks with a failed project
-    const failedProject = {
+    const failedProject: Project = {
       ...mockProject,
       analysisResult: undefined,
       status: 'failed',
       analysisError: 'Analysis failed due to incomplete documentation.',
     };
 
-    const mockGetProjectDetails = api.getProjectDetails as jest.Mock;
-    mockGetProjectDetails.mockResolvedValue(failedProject);
+    jest
+      .spyOn(api, 'getProjectDetails')
+      .mockResolvedValueOnce(failedProject) // First call
+      .mockResolvedValueOnce({
+        // Second call after retry
+        ...failedProject,
+        status: 'analyzing',
+        analysisError: undefined,
+      } as Project);
 
-    const mockGetProjectFiles = api.getProjectFiles as jest.Mock;
-    mockGetProjectFiles.mockResolvedValue(mockProject.files);
+    jest
+      .spyOn(api, 'getProjectFiles')
+      .mockResolvedValue(mockProject.files || []);
 
     render(<ProjectDetail projectId="test-id" />);
 
-    // Wait for data loading to complete and the retry button to be available
-    await waitFor(
-      () => {
-        expect(screen.getByTestId('retry-analysis-button')).toBeInTheDocument();
-      },
-      { timeout: 5000 },
-    );
+    // Wait for loading to complete and retry button to appear
+    const retryButton = await screen.findByTestId('retry-analysis-button');
 
-    // Make sure runAnalysis is clear before we click the button
+    // Verify button is present with the right text
+    expect(retryButton).toHaveTextContent('Retry Analysis');
+
+    // Make sure runAnalysis hasn't been called yet
     expect(mockRunAnalysis).not.toHaveBeenCalled();
 
-    // Click the retry analysis button - use querySelector for better targeting
-    const button = document.getElementById('retry-analysis-btn-for-testing');
-    if (!button) {
-      throw new Error('Retry analysis button not found');
-    }
+    // Click the button
+    fireEvent.click(retryButton);
 
-    // Use vanilla JS click for better browser compatibility
-    button.click();
+    // Verify API was called with the correct project ID
+    await waitFor(() => {
+      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+    });
 
-    // Use a longer timeout for the async operations
-    await waitFor(
-      () => {
-        expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
-      },
-      { timeout: 5000 },
-    );
+    // Project details should be refreshed
+    await waitFor(() => {
+      expect(api.getProjectDetails).toHaveBeenCalledTimes(2);
+    });
 
-    // Should call getProjectDetails again to refresh data
-    await waitFor(
-      () => {
-        expect(mockGetProjectDetails).toHaveBeenCalledTimes(2);
-      },
-      { timeout: 5000 },
-    );
-
-    // Restore the original implementation
+    // Clean up
     mockRunAnalysis.mockRestore();
   });
 });
