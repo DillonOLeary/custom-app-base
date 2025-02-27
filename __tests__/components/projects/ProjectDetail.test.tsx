@@ -177,10 +177,9 @@ describe('ProjectDetail', () => {
   });
 
   test('runs analysis when run button is clicked', async () => {
-    // Mock the API methods with jest.spyOn
-    const mockRunAnalysis = jest
-      .spyOn(api, 'runAnalysis')
-      .mockResolvedValue({} as any);
+    // First, reset the mock of runAnalysis
+    (api.runAnalysis as jest.Mock).mockReset();
+    (api.runAnalysis as jest.Mock).mockResolvedValue({} as any);
 
     // Setup mocks with a pending project that has files
     const pendingProject: Project = {
@@ -189,8 +188,9 @@ describe('ProjectDetail', () => {
       status: 'pending',
     };
 
-    jest
-      .spyOn(api, 'getProjectDetails')
+    // Reset and mock getProjectDetails
+    (api.getProjectDetails as jest.Mock).mockReset();
+    (api.getProjectDetails as jest.Mock)
       .mockResolvedValueOnce(pendingProject) // First call
       .mockResolvedValueOnce({
         // Second call after analysis
@@ -198,9 +198,11 @@ describe('ProjectDetail', () => {
         status: 'analyzing',
       } as Project);
 
-    jest
-      .spyOn(api, 'getProjectFiles')
-      .mockResolvedValue(mockProject.files || []);
+    // Reset and mock getProjectFiles
+    (api.getProjectFiles as jest.Mock).mockReset();
+    (api.getProjectFiles as jest.Mock).mockResolvedValue(
+      mockProject.files || [],
+    );
 
     render(<ProjectDetail projectId="test-id" />);
 
@@ -211,30 +213,26 @@ describe('ProjectDetail', () => {
     expect(runButton).toHaveTextContent('Run CEARTscore Analysis');
 
     // Make sure runAnalysis hasn't been called yet
-    expect(mockRunAnalysis).not.toHaveBeenCalled();
+    expect(api.runAnalysis).not.toHaveBeenCalled();
 
     // Click the button
     fireEvent.click(runButton);
 
     // Verify API was called with the correct project ID
     await waitFor(() => {
-      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+      expect(api.runAnalysis).toHaveBeenCalledWith('test-id');
     });
 
     // Project details should be refreshed
     await waitFor(() => {
       expect(api.getProjectDetails).toHaveBeenCalledTimes(2);
     });
-
-    // Clean up
-    mockRunAnalysis.mockRestore();
   });
 
   test('retries analysis for failed projects', async () => {
-    // Use jest.spyOn instead of direct mock assignment
-    const mockRunAnalysis = jest
-      .spyOn(api, 'runAnalysis')
-      .mockResolvedValue({} as any);
+    // First, reset the mock of runAnalysis
+    (api.runAnalysis as jest.Mock).mockReset();
+    (api.runAnalysis as jest.Mock).mockResolvedValue({} as any);
 
     // Setup mocks with a failed project
     const failedProject: Project = {
@@ -244,8 +242,9 @@ describe('ProjectDetail', () => {
       analysisError: 'Analysis failed due to incomplete documentation.',
     };
 
-    jest
-      .spyOn(api, 'getProjectDetails')
+    // Reset and mock getProjectDetails
+    (api.getProjectDetails as jest.Mock).mockReset();
+    (api.getProjectDetails as jest.Mock)
       .mockResolvedValueOnce(failedProject) // First call
       .mockResolvedValueOnce({
         // Second call after retry
@@ -254,35 +253,38 @@ describe('ProjectDetail', () => {
         analysisError: undefined,
       } as Project);
 
-    jest
-      .spyOn(api, 'getProjectFiles')
-      .mockResolvedValue(mockProject.files || []);
+    // Reset and mock getProjectFiles
+    (api.getProjectFiles as jest.Mock).mockReset();
+    (api.getProjectFiles as jest.Mock).mockResolvedValue(
+      mockProject.files || [],
+    );
 
     render(<ProjectDetail projectId="test-id" />);
 
     // Wait for loading to complete and retry button to appear
-    const retryButton = await screen.findByTestId('retry-analysis-button');
+    await waitFor(() => {
+      expect(screen.getByText('ANALYSIS FAILED')).toBeInTheDocument();
+    });
+
+    const retryButton = screen.getByTestId('retry-analysis-button');
 
     // Verify button is present with the right text
     expect(retryButton).toHaveTextContent('Retry Analysis');
 
     // Make sure runAnalysis hasn't been called yet
-    expect(mockRunAnalysis).not.toHaveBeenCalled();
+    expect(api.runAnalysis).not.toHaveBeenCalled();
 
     // Click the button
     fireEvent.click(retryButton);
 
     // Verify API was called with the correct project ID
     await waitFor(() => {
-      expect(mockRunAnalysis).toHaveBeenCalledWith('test-id');
+      expect(api.runAnalysis).toHaveBeenCalledWith('test-id');
     });
 
     // Project details should be refreshed
     await waitFor(() => {
       expect(api.getProjectDetails).toHaveBeenCalledTimes(2);
     });
-
-    // Clean up
-    mockRunAnalysis.mockRestore();
   });
 });
