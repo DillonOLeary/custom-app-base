@@ -5,6 +5,24 @@
 
 // Import testing libraries
 import { Page } from '@playwright/test';
+import { setupSdkMocks } from './setup/sdk-mock';
+
+/**
+ * Initialize test environment
+ * Sets up mocks and ensures consistent test state
+ */
+export function initTestEnvironment(): void {
+  // Set up the Copilot SDK mocks
+  setupSdkMocks();
+  
+  // Ensure the COPILOT_ENV is set to 'local'
+  process.env.COPILOT_ENV = 'local';
+  
+  console.log('Test environment initialized');
+}
+
+// Initialize the test environment when this module is loaded
+initTestEnvironment();
 
 /**
  * Reset database state for tests

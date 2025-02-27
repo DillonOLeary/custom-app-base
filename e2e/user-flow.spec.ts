@@ -1,5 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 import { resetTestDatabase, getStandardTestProjects } from './test-setup';
+import { injectSdkMocksToPage } from './setup/browser-mocks';
 
 /**
  * These tests verify the complete user flow from viewing projects,
@@ -13,6 +14,10 @@ test.describe('Complete user flow tests', () => {
   });
   // Common setup function to navigate to the dashboard and verify it loads
   async function navigateToDashboard(page: Page) {
+    // Inject SDK mocks before navigating
+    await injectSdkMocksToPage(page);
+    
+    // Navigate to the main page
     await page.goto('/');
 
     // Verify the dashboard loads properly with project list
@@ -140,6 +145,9 @@ test.describe('Complete user flow tests', () => {
   test('User can upload files to a project and view them in the file browser', async ({
     page,
   }) => {
+    // Inject SDK mocks before navigating
+    await injectSdkMocksToPage(page);
+    
     // Use consistent test projects
     const projects = getStandardTestProjects();
 
@@ -185,6 +193,9 @@ test.describe('Complete user flow tests', () => {
   test('User can run analysis on a project with uploaded files', async ({
     page,
   }) => {
+    // Inject SDK mocks before navigating
+    await injectSdkMocksToPage(page);
+    
     // Use consistent test projects
     const projects = getStandardTestProjects();
 

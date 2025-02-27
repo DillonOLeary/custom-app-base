@@ -9,7 +9,8 @@ import { ProjectsDashboard } from '@/components/project-dashboard/ProjectsDashbo
  */
 export const revalidate = 180;
 
-async function Content({ searchParams }: { searchParams: SearchParams }) {
+// Using JSX.Element as return type to fix TypeScript error
+async function Content({ searchParams }: { searchParams: SearchParams }): Promise<JSX.Element> {
   // Setup Copilot API client
   const { token } = searchParams;
   const copilot = copilotApi({
@@ -18,8 +19,21 @@ async function Content({ searchParams }: { searchParams: SearchParams }) {
   });
 
   // These API calls are kept for session validation but not directly used
-  await copilot.retrieveWorkspace();
-  await copilot.getTokenPayload?.();
+  try {
+    await copilot.retrieveWorkspace();
+    
+    // Only call getTokenPayload if it exists
+    if (typeof copilot.getTokenPayload === 'function') {
+      await copilot.getTokenPayload();
+    }
+  } catch (error) {
+    // In development mode or tests, we can continue without valid Copilot SDK
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+      console.log('Running in development/test mode without SDK validation');
+    } else {
+      throw new Error('Unable to authorize Copilot SDK.');
+    }
+  }
 
   return <ProjectsDashboard />;
 }

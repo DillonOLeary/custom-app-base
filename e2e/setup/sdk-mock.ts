@@ -33,21 +33,76 @@ const mockResponses = {
       status: 'pending',
     },
   ],
+  tokenPayload: {
+    userId: 'test-user-id',
+    workspaceId: 'test-workspace-id',
+    exp: Date.now() + 3600000, // One hour from now
+  },
+  workspace: {
+    id: 'test-workspace-id',
+    name: 'Test Workspace',
+    owner: 'test-user-id',
+  }
 };
+
+// Store original implementations
+const originalModule = jest.requireActual('copilot-node-sdk');
+let sdkMockEnabled = false;
 
 /**
  * Setup Copilot SDK mocks for testing
  * This should be called before running tests
  */
 export function setupSdkMocks() {
-  // Since the tests are already using mock data in the API routes,
-  // we don't need to do additional setup here.
-  // This function is a placeholder for when we need to mock more complex SDK behavior.
-
-  // In a real implementation, we might need to:
-  // 1. Intercept SDK initialization
-  // 2. Replace SDK methods with mocks
-  // 3. Return predefined responses
+  if (typeof window !== 'undefined') {
+    // Mock the SDK in the browser environment
+    sdkMockEnabled = true;
+    
+    // Mock the copilotApi function
+    (window as any).copilotApi = jest.fn().mockImplementation(() => ({
+      retrieveWorkspace: jest.fn().mockResolvedValue(mockResponses.workspace),
+      getTokenPayload: jest.fn().mockResolvedValue(mockResponses.tokenPayload),
+      // Add other methods as needed
+      getProjects: jest.fn().mockResolvedValue(mockResponses.projects),
+      getProjectById: jest.fn().mockImplementation((id) => {
+        return Promise.resolve(mockResponses.projects.find(p => p.id === id) || null);
+      }),
+      createProject: jest.fn().mockImplementation((project) => {
+        const newProject = {
+          id: `new-${Date.now()}`,
+          ...project,
+          status: 'pending',
+        };
+        return Promise.resolve(newProject);
+      }),
+    }));
+  }
+  
+  // For server-side (Node.js) environment
+  if (typeof jest !== 'undefined') {
+    jest.mock('copilot-node-sdk', () => {
+      return {
+        ...originalModule,
+        copilotApi: () => ({
+          retrieveWorkspace: jest.fn().mockResolvedValue(mockResponses.workspace),
+          getTokenPayload: jest.fn().mockResolvedValue(mockResponses.tokenPayload),
+          // Add other methods as needed
+          getProjects: jest.fn().mockResolvedValue(mockResponses.projects),
+          getProjectById: jest.fn().mockImplementation((id) => {
+            return Promise.resolve(mockResponses.projects.find(p => p.id === id) || null);
+          }),
+          createProject: jest.fn().mockImplementation((project) => {
+            const newProject = {
+              id: `new-${Date.now()}`,
+              ...project,
+              status: 'pending',
+            };
+            return Promise.resolve(newProject);
+          }),
+        }),
+      };
+    });
+  }
 
   console.log('Copilot SDK mocks initialized for testing');
 }

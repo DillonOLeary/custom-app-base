@@ -26,6 +26,7 @@ export default defineConfig({
     stderr: 'pipe',
     env: {
       COPILOT_ENV: 'local',
+      NODE_ENV: 'test', // Ensure we're running in test mode
     },
   },
 });

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { injectSdkMocksToPage } from './setup/browser-mocks';
 
 /**
  * These tests verify the layout issues we fixed, including the visual gap
@@ -8,6 +9,9 @@ test.describe('Layout and visual appearance tests', () => {
   test('Project detail page should not have large vertical gaps', async ({
     page,
   }) => {
+    // Inject SDK mocks before navigating
+    await injectSdkMocksToPage(page);
+    
     // Go to a completed project that will show analysis results
     await page.goto('/projects/1');
     await page.waitForLoadState('networkidle');
@@ -64,6 +68,9 @@ test.describe('Layout and visual appearance tests', () => {
   test('File browser shows appropriate content based on project uploads', async ({
     page,
   }) => {
+    // Inject SDK mocks before navigating
+    await injectSdkMocksToPage(page);
+    
     // Go to a project with files
     await page.goto('/projects/1');
     await page.waitForLoadState('networkidle');
