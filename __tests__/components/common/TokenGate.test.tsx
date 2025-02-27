@@ -28,7 +28,9 @@ describe('TokenGate', () => {
 
   test('throws error when token is missing and not in development environment', () => {
     // Mock process.env.NODE_ENV to not be 'development'
-    process.env.NODE_ENV = 'production';
+    const originalNodeEnv = process.env.NODE_ENV;
+    // Use Object.defineProperty to override the read-only property
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production' });
 
     const searchParams: SearchParams = {};
 
@@ -44,11 +46,15 @@ describe('TokenGate', () => {
     }).toThrow('Session Token is required');
 
     consoleErrorMock.mockRestore();
+    // Restore the original NODE_ENV
+    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 
   test('renders children when token is missing but in development environment', () => {
     // Mock process.env.NODE_ENV to be 'development'
-    process.env.NODE_ENV = 'development';
+    const originalNodeEnv = process.env.NODE_ENV;
+    // Use Object.defineProperty to override the read-only property
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development' });
 
     const searchParams: SearchParams = {};
     const { getByText } = render(
@@ -58,5 +64,8 @@ describe('TokenGate', () => {
     );
 
     expect(getByText('Protected Content')).toBeInTheDocument();
+
+    // Restore the original NODE_ENV
+    Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
   });
 });
