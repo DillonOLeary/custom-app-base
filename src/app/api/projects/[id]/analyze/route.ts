@@ -41,7 +41,8 @@ export async function POST(
             id: 'auto-cf1',
             category: 'completeness',
             title: 'Missing permit documentation',
-            description: 'Required permit documentation is incomplete or missing.',
+            description:
+              'Required permit documentation is incomplete or missing.',
             impact: 'medium',
             pointsDeducted: 5,
           },

@@ -26,7 +26,10 @@ const ALLOWED_FILE_TYPES = [
  * @param claims The validated token claims
  * @returns Response with error if CSRF validation fails, null otherwise
  */
-function validateCsrfToken(request: NextRequest, claims: any): NextResponse | null {
+function validateCsrfToken(
+  request: NextRequest,
+  claims: any,
+): NextResponse | null {
   // Skip CSRF check in development
   if (process.env.NODE_ENV === 'development') {
     return null;
@@ -40,15 +43,19 @@ function validateCsrfToken(request: NextRequest, claims: any): NextResponse | nu
 
   // Get the CSRF token from the header
   const csrfToken = request.headers.get('x-csrf-token');
-  
+
   // Verify CSRF token exists and matches the token in claims
   if (!csrfToken || !claims?.csrf || csrfToken !== claims.csrf) {
-    return NextResponse.json({
-      error: 'CSRF token missing or invalid',
-      message: 'Missing or invalid CSRF token. Please refresh the page and try again.'
-    }, { status: 403 });
+    return NextResponse.json(
+      {
+        error: 'CSRF token missing or invalid',
+        message:
+          'Missing or invalid CSRF token. Please refresh the page and try again.',
+      },
+      { status: 403 },
+    );
   }
-  
+
   return null;
 }
 
@@ -61,7 +68,7 @@ function sanitizeFileName(fileName: string): string {
     .replace(/^\.+|\.+$/g, '') // Remove leading or trailing dots
     .replace(/[<>]/g, '_') // Replace < and > to prevent HTML injection
     .trim();
-    
+
   // Ensure the filename is not empty after sanitization
   return sanitized || 'unnamed_file';
 }
@@ -88,7 +95,9 @@ export async function POST(
   // Here we're just doing a mock check using claims from the token
   if (claims && claims.workspaceId) {
     // Log the access for audit trail
-    console.log(`User ${claims.sub} accessing project ${id} in workspace ${claims.workspaceId}`);
+    console.log(
+      `User ${claims.sub} accessing project ${id} in workspace ${claims.workspaceId}`,
+    );
   }
 
   try {
@@ -103,7 +112,7 @@ export async function POST(
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         { error: 'File exceeds maximum allowed size of 100MB' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +120,7 @@ export async function POST(
     if (!ALLOWED_FILE_TYPES.includes(file.type) && file.type !== '') {
       return NextResponse.json(
         { error: 'File type not allowed', allowedTypes: ALLOWED_FILE_TYPES },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,22 +143,26 @@ export async function POST(
 
     // In a real implementation, we would use the Dropbox API here
     // with proper encryption and secure handling of credentials
-    console.log(
-      `[Mock] Uploading file to secure storage for project ${id}`,
-    );
+    console.log(`[Mock] Uploading file to secure storage for project ${id}`);
 
     // Return the file upload record with appropriate security headers
     const response = NextResponse.json(newFile, { status: 201 });
-    
+
     // Add security headers
     response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    
+    response.headers.set(
+      'Cache-Control',
+      'private, no-cache, no-store, must-revalidate',
+    );
+
     return response;
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file', message: 'An unexpected error occurred' },
+      {
+        error: 'Failed to upload file',
+        message: 'An unexpected error occurred',
+      },
       { status: 500 },
     );
   }
@@ -161,11 +174,11 @@ export async function GET(
 ) {
   // Clean up expired rate limit entries periodically
   cleanupRateLimitStore();
-  
+
   // Enhanced token validation with claims extraction
   const { response, claims } = await validateToken(request);
   if (response) return response;
-  
+
   // Note: CSRF check not needed for GET requests as they don't modify state
   // However, we still perform the security check to be thorough
   const csrfError = validateCsrfToken(request, claims);
@@ -176,9 +189,11 @@ export async function GET(
   // Additional authorization check - ensure user has access to this project
   if (claims && claims.workspaceId) {
     // Log the access for audit trail
-    console.log(`User ${claims.sub} accessing files for project ${id} in workspace ${claims.workspaceId}`);
+    console.log(
+      `User ${claims.sub} accessing files for project ${id} in workspace ${claims.workspaceId}`,
+    );
   }
-  
+
   // Simulate a delay
   await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -197,10 +212,13 @@ export async function GET(
 
   // Return files with appropriate security headers
   const fileResponse = NextResponse.json(project.files || []);
-  
+
   // Add security headers to prevent common web vulnerabilities
   fileResponse.headers.set('X-Content-Type-Options', 'nosniff');
-  fileResponse.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  
+  fileResponse.headers.set(
+    'Cache-Control',
+    'private, no-cache, no-store, must-revalidate',
+  );
+
   return fileResponse;
 }
