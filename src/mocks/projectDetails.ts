@@ -159,7 +159,10 @@ const generateCategoryScore = (
 };
 
 // Generate an analysis result for a project
-const generateAnalysisResult = (projectId: string): AnalysisResult => {
+const generateAnalysisResult = (
+  projectId: string,
+  targetScore?: number,
+): AnalysisResult => {
   const categories: ScoreCategory[] = [
     'completeness',
     'financialClaims',
@@ -168,11 +171,41 @@ const generateAnalysisResult = (projectId: string): AnalysisResult => {
     'reputationScreening',
   ];
 
-  const categoryScores = categories.map((category) =>
-    generateCategoryScore(projectId, category),
-  );
+  let categoryScores;
+  let totalScore;
 
-  const totalScore = categoryScores.reduce((sum, cat) => sum + cat.score, 0);
+  if (targetScore) {
+    // If a target score is provided, distribute scores to match the target
+    const baseScore = Math.floor(targetScore / 5); // Divide by categories count
+    const remainder = targetScore % 5; // Distribute remainder to some categories
+
+    categoryScores = categories.map((category, index) => {
+      const categoryScore = baseScore + (index < remainder ? 1 : 0);
+      // Generate redFlags but adjust the pointsDeducted to match our target score
+      const redFlags = generateRedFlags(projectId, category);
+      const adjustedRedFlags = redFlags.map((flag) => ({
+        ...flag,
+        pointsDeducted: Math.min(flag.pointsDeducted, 2), // Reduce points deducted
+      }));
+
+      return {
+        category,
+        score: categoryScore,
+        maxScore: 20,
+        redFlags: adjustedRedFlags,
+      };
+    });
+
+    totalScore = targetScore;
+  } else {
+    // Standard calculation
+    categoryScores = categories.map((category) =>
+      generateCategoryScore(projectId, category),
+    );
+
+    totalScore = categoryScores.reduce((sum, cat) => sum + cat.score, 0);
+  }
+
   const redFlagCount = categoryScores.reduce(
     (sum, cat) => sum + cat.redFlags.length,
     0,
@@ -397,7 +430,8 @@ export const getMockProjectDetails = (
     case 'completed': {
       // Completed projects have full analysis and files
       const files = generateMockFiles(project.id);
-      const analysisResult = generateAnalysisResult(project.id);
+      // Use the project's actual score from the dashboard if available
+      const analysisResult = generateAnalysisResult(project.id, project.score);
 
       // Enhance red flags with file information
       analysisResult.categoryScores.forEach((category) => {
