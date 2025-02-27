@@ -19,7 +19,9 @@ const customJestConfig = {
     '/node_modules/',
     '/.next/',
     '/__tests__/support/',
+    '/__tests__/utils/test-utils.ts',
     '/e2e/',
+    '.stryker-tmp',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

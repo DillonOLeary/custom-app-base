@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { FileList } from '@/components/project-detail/FileList';
-import { mockProject } from '../../support/testUtils';
+import { mockProject } from '../../utils/test-utils';
 import { formatFileSize } from '@/utils/formatters';
 import { FileUpload } from '@/types/project';
 

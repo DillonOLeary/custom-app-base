@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProjectDetail } from '@/components/project-detail/ProjectDetail';
-import { mockProject } from '../../support/testUtils';
+import { mockProject } from '../../utils/test-utils';
 import * as api from '@/services/api';
 import { Project } from '@/types/project';
 

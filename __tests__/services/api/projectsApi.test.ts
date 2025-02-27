@@ -239,7 +239,7 @@ describe('Projects API', () => {
         { status: 'completed' },
         token,
       );
-      // Console.log assertions removed as they are problematic in mutation testing
+      // We don't check for console.log calls anymore as they're problematic in mutation testing
     });
 
     test('should handle errors in file processing simulation', async () => {
@@ -263,7 +263,7 @@ describe('Projects API', () => {
       // Fast-forward timer to trigger setTimeout
       jest.runAllTimers();
 
-      // Console.error assertions removed as they are problematic in mutation testing
+      // We don't check for console.error calls anymore as they're problematic in mutation testing
     });
   });
 

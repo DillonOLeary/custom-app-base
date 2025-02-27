@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ProjectHeader } from '@/components/project-detail/ProjectHeader';
-import { mockProject } from '../../support/testUtils';
+import { mockProject } from '../../utils/test-utils';
 
 // Mock Next.js Link component
 jest.mock('next/link', () => {

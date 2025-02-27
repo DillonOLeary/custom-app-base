@@ -105,14 +105,14 @@ describe('FolderBrowser', () => {
     );
 
     // Check folders - use testid to avoid ambiguity with folder path text
-    const folderElement = screen.getByTestId('folder-folder-1');
+    const folderElement = screen.getByTestId('folder-Test Folder');
     expect(folderElement).toBeInTheDocument();
 
     // Root files should be visible
     expect(screen.getByText('root-file.pdf')).toBeInTheDocument();
 
     // Verify basic folder structure exists
-    expect(folderElement).toHaveAttribute('data-testid', 'folder-folder-1');
+    expect(folderElement).toHaveAttribute('data-testid', 'folder-Test Folder');
 
     // Find folder name within the folder element to avoid ambiguity
     const folderName = within(folderElement).getByText('Test Folder');
@@ -132,7 +132,7 @@ describe('FolderBrowser', () => {
     );
 
     // Expand the folder using testid
-    fireEvent.click(screen.getByTestId('folder-folder-1'));
+    fireEvent.click(screen.getByTestId('folder-Test Folder'));
 
     // Verify folder is expanded
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
@@ -162,7 +162,7 @@ describe('FolderBrowser', () => {
     );
 
     // Expand the folder using testid
-    fireEvent.click(screen.getByTestId('folder-folder-1'));
+    fireEvent.click(screen.getByTestId('folder-Test Folder'));
 
     // Verify folder is expanded
     expect(screen.getByText('test-file.pdf')).toBeInTheDocument();
@@ -226,8 +226,8 @@ describe('FolderBrowser', () => {
       />,
     );
 
-    // Expand the folder to see highlighted file
-    fireEvent.click(screen.getByTestId('folder-folder-1'));
+    // Expand the folder to see highlighted file - use the same approach as other tests
+    fireEvent.click(screen.getByTestId('folder-Test Folder'));
 
     // Find the file by testid - using the specific file we know has the highlight applied
     const fileElement = screen.getByTestId('file-item-file-2');

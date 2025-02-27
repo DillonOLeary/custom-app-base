@@ -239,18 +239,30 @@ test.describe('Complete user flow tests', () => {
       await page.waitForTimeout(5000);
 
       // Look for specific elements to avoid strict mode violations
+      // Use a more specific selector for CEARTscore
       const hasResults =
-        (await page.getByText('CEARTscore:').isVisible()) ||
-        (await page.getByText('ANALYSIS RESULTS').isVisible());
+        (await page
+          .locator('span.heading-secondary:has-text("CEARTscore:")')
+          .first()
+          .isVisible()) ||
+        (await page
+          .getByRole('heading', { name: 'ANALYSIS RESULTS' })
+          .isVisible());
       expect(hasResults).toBe(true);
     } else {
       // If no button found, the project might already be analyzed
       console.log('No analysis button found - project may already be analyzed');
       // Check if we can see CEARTscore or analysis results
-      // We'll check one specific element to avoid strict mode violations
+      // We'll check score element or analysis results heading to avoid strict mode violations
+      // Use a more specific selector for CEARTscore by looking for the container element
       const hasCeartScore =
-        (await page.getByText('CEARTscore:').isVisible()) ||
-        (await page.getByText('ANALYSIS RESULTS').isVisible());
+        (await page
+          .locator('span.heading-secondary:has-text("CEARTscore:")')
+          .first()
+          .isVisible()) ||
+        (await page
+          .getByRole('heading', { name: 'ANALYSIS RESULTS' })
+          .isVisible());
       expect(hasCeartScore).toBe(true);
     }
   });
@@ -329,9 +341,15 @@ test.describe('Complete user flow tests', () => {
     await page.waitForTimeout(1000); // Brief wait
 
     // Look for either CEARTscore or ANALYSIS RESULTS without requiring both
+    // Use a more specific selector for CEARTscore by looking for the container element
     const hasScore =
-      (await page.getByText('CEARTscore:').isVisible()) ||
-      (await page.getByText('ANALYSIS RESULTS').isVisible());
+      (await page
+        .locator('span.heading-secondary:has-text("CEARTscore:")')
+        .first()
+        .isVisible()) ||
+      (await page
+        .getByRole('heading', { name: 'ANALYSIS RESULTS' })
+        .isVisible());
 
     // At least one indicator of analysis results should be visible
     expect(hasScore).toBe(true);

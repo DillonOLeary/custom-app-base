@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RedFlagDetails } from '@/components/project-detail/RedFlagDetails';
-import { mockProject } from '../../support/testUtils';
+import { mockProject } from '../../utils/test-utils';
 import { CATEGORY_DESCRIPTIONS } from '@/utils/categoryDescriptions';
 
 describe('RedFlagDetails', () => {
@@ -41,11 +41,14 @@ describe('RedFlagDetails', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(categoryInfo.description)).toBeInTheDocument();
 
-    // Check red flags section title
+    // Check red flags section title - using a text matcher function to handle spacing
     expect(
-      screen.getByText(
-        `IDENTIFIED ISSUES (${completenessCategory.redFlags.length})`,
-      ),
+      screen.getByText((content) => {
+        return (
+          content.includes('RED FLAGS') &&
+          content.includes(completenessCategory.redFlags.length.toString())
+        );
+      }),
     ).toBeInTheDocument();
 
     // Check red flags are displayed

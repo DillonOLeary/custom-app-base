@@ -1,3 +1,6 @@
+/* This is a utility file, not a test file
+ * Renamed to avoid Jest treating it as a test file
+ */
 import { render, RenderOptions } from '@testing-library/react';
 import React, { ReactElement } from 'react';
 

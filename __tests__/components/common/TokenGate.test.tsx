@@ -75,29 +75,33 @@ describe('TokenGate', () => {
     Object.defineProperty(process.env, 'NODE_ENV', { value: 'development' });
 
     const searchParams: SearchParams = {};
-    const { getByText } = render(
+
+    // For each test case, we clean up the previous render to avoid conflicts
+    // Test with no token in searchParams
+    const { getByText, unmount: unmount1 } = render(
       <TokenGate searchParams={searchParams}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-
     expect(getByText('Protected Content')).toBeInTheDocument();
+    unmount1();
 
-    // Also test with different empty token values
-    const { container: container2 } = render(
+    // Test with empty string token
+    const { getByText: getByText2, unmount: unmount2 } = render(
       <TokenGate searchParams={{ token: '' }}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-    expect(container2.textContent).toContain('Protected Content');
+    expect(getByText2('Protected Content')).toBeInTheDocument();
+    unmount2();
 
-    // Test with empty search params
-    const { container: container3 } = render(
+    // Test with explicit empty search params
+    const { getByText: getByText3 } = render(
       <TokenGate searchParams={{}}>
         <div>Protected Content</div>
       </TokenGate>,
     );
-    expect(container3.textContent).toContain('Protected Content');
+    expect(getByText3('Protected Content')).toBeInTheDocument();
 
     // Restore the original NODE_ENV
     Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv });
