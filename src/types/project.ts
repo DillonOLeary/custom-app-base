@@ -36,7 +36,7 @@ export interface FileUpload {
   fileName: string;
   fileSize: number;
   uploadDate: string;
-  status: 'uploaded' | 'processing' | 'completed' | 'failed';
+  status: FileStatus;
   errorMessage?: string;
   path?: string; // File path within the data room structure (e.g., "Site Control/Leases/")
   fileType?: string; // Document type (e.g., "lease", "permit", "design")
@@ -55,13 +55,22 @@ export interface Folder {
   missingRecommendedFiles?: string[]; // List of recommended files that are missing
 }
 
+export type ProjectStatus =
+  | 'new'
+  | 'pending'
+  | 'analyzing'
+  | 'completed'
+  | 'failed';
+
+export type FileStatus = 'uploaded' | 'processing' | 'completed' | 'failed';
+
 export interface Project {
   id: string;
   name: string;
   location: string;
   type: 'solar' | 'wind' | 'hydro' | 'geothermal' | 'biomass' | 'other';
   capacity: number; // in MW
-  status: 'new' | 'pending' | 'analyzing' | 'completed' | 'failed';
+  status: ProjectStatus;
   createdAt: string;
   updatedAt: string;
   score?: number; // 0-100 score representing data room quality

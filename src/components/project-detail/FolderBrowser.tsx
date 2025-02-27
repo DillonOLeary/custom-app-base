@@ -292,10 +292,19 @@ export function FolderBrowser({
         </div>
       ) : (
         <div className="bg-white border border-[--color-bg-1] rounded-lg p-4">
-          {/* Folder tree structure - fixed height to prevent resizing */}
-          <div className="mb-4 min-h-[200px]">
-            {folders.map((folder) => renderFolder(folder))}
-          </div>
+          {/* Folder tree structure */}
+          {folders.length > 0 ? (
+            <div className="mb-4">
+              {folders.map((folder) => renderFolder(folder))}
+            </div>
+          ) : (
+            <div className="mb-4 text-center p-3">
+              <p className="heading-secondary text-3 text-[--color-bg-3]">
+                No folder structure detected. Upload files with folder paths for
+                better organization.
+              </p>
+            </div>
+          )}
 
           {/* Files at root level */}
           {files.length > 0 && (

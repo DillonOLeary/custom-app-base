@@ -232,9 +232,8 @@ export function processFilesForProject(
     // Organize files into folders
     const { folders, rootFiles } = organizeFilesIntoFolders(processedFiles);
 
-    // If no folders were created from file paths, initialize standard structure
-    const finalFolders =
-      folders.length > 0 ? folders : initializeStandardFolders();
+    // Use the actual folders from the files, don't initialize standard structure
+    const finalFolders = folders;
 
     // Add missing files to folders if red flags are provided
     if (redFlags?.length) {

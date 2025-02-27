@@ -201,10 +201,7 @@ export function ProjectDetail({ projectId, token }: ProjectDetailProps) {
       <div className="relative">
         {/* Show Score Overview or Red Flag Details first when analysis is available */}
         {project.analysisResult && (
-          <div
-            className="relative"
-            style={{ height: '800px', overflowY: 'auto' }}
-          >
+          <div className="relative mb-8">
             {selectedCategoryScore ? (
               <RedFlagDetails
                 categoryScore={selectedCategoryScore}
