@@ -18,6 +18,7 @@ describe('RedFlagDetails', () => {
   });
 
   test('renders category details and red flags correctly', () => {
+    // Using as to ensure TypeScript knows this is a CategoryScore with the right type
     render(
       <RedFlagDetails 
         categoryScore={completenessCategory} 

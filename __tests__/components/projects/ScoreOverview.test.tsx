@@ -31,7 +31,7 @@ describe('ScoreOverview', () => {
     
     // Check category scores are displayed - use more specific queries to handle duplicate text
     for (const category of mockProject.analysisResult!.categoryScores) {
-      const categoryInfo = CATEGORY_DESCRIPTIONS[category.category];
+      const categoryInfo = CATEGORY_DESCRIPTIONS[category.category as ScoreCategory];
       expect(screen.getByText(categoryInfo.title)).toBeInTheDocument();
       
       // Use getByTestId to find the specific category button, then check its content
@@ -49,7 +49,7 @@ describe('ScoreOverview', () => {
     );
     
     // Before clicking, no expanded content should be visible
-    const categoryInfo = CATEGORY_DESCRIPTIONS['completeness'];
+    const categoryInfo = CATEGORY_DESCRIPTIONS['completeness' as ScoreCategory];
     expect(screen.queryByText(categoryInfo.description)).not.toBeInTheDocument();
     
     // Click to expand

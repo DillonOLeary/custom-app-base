@@ -9,8 +9,10 @@ export function renderWithProviders(
   return render(ui, { ...options });
 }
 
+import { Project, FileUpload, CategoryScore, ScoreCategory } from '@/types/project';
+
 // Mock project data for testing
-export const mockProject = {
+export const mockProject: Project = {
   id: 'test-id',
   name: 'Test Project',
   location: 'Test Location',
@@ -26,13 +28,13 @@ export const mockProject = {
     redFlagCount: 7,
     categoryScores: [
       {
-        category: 'completeness',
+        category: 'completeness' as ScoreCategory,
         score: 12,
         maxScore: 20,
         redFlags: [
           {
             id: 'test-c1',
-            category: 'completeness',
+            category: 'completeness' as ScoreCategory,
             title: 'Missing environmental impact assessment',
             description: 'No evidence of a completed environmental impact assessment was found in the data room.',
             impact: 'high',
@@ -40,7 +42,7 @@ export const mockProject = {
           },
           {
             id: 'test-c2',
-            category: 'completeness',
+            category: 'completeness' as ScoreCategory,
             title: 'Incomplete land survey documentation',
             description: 'Land survey documentation is present but missing key boundary definitions and easement details.',
             impact: 'medium',
@@ -49,13 +51,13 @@ export const mockProject = {
         ]
       },
       {
-        category: 'financialClaims',
+        category: 'financialClaims' as ScoreCategory,
         score: 15,
         maxScore: 20,
         redFlags: [
           {
             id: 'test-f1',
-            category: 'financialClaims',
+            category: 'financialClaims' as ScoreCategory,
             title: 'Unrealistic revenue projections',
             description: 'Revenue projections exceed industry benchmarks by more than 25% without sufficient justification.',
             impact: 'high',
@@ -63,7 +65,7 @@ export const mockProject = {
           },
           {
             id: 'test-f2',
-            category: 'financialClaims',
+            category: 'financialClaims' as ScoreCategory,
             title: 'Missing sensitivity analysis',
             description: 'Financial models lack proper sensitivity analysis for key variables like resource availability and price fluctuations.',
             impact: 'medium',
@@ -72,13 +74,13 @@ export const mockProject = {
         ]
       },
       {
-        category: 'contractCoverage',
+        category: 'contractCoverage' as ScoreCategory,
         score: 15,
         maxScore: 20,
         redFlags: [
           {
             id: 'test-cc1',
-            category: 'contractCoverage',
+            category: 'contractCoverage' as ScoreCategory,
             title: 'Missing interconnection agreement',
             description: 'No formal grid interconnection agreement was found in the data room.',
             impact: 'high',
@@ -87,19 +89,19 @@ export const mockProject = {
         ]
       },
       {
-        category: 'contractQuality',
+        category: 'contractQuality' as ScoreCategory,
         score: 20,
         maxScore: 20,
         redFlags: []
       },
       {
-        category: 'reputationScreening',
+        category: 'reputationScreening' as ScoreCategory,
         score: 10,
         maxScore: 20,
         redFlags: [
           {
             id: 'test-r1',
-            category: 'reputationScreening',
+            category: 'reputationScreening' as ScoreCategory,
             title: 'EPC contractor past performance issues',
             description: 'Selected EPC contractor has documented history of project delays exceeding 6 months on similar projects.',
             impact: 'high',
@@ -107,7 +109,7 @@ export const mockProject = {
           },
           {
             id: 'test-r2',
-            category: 'reputationScreening',
+            category: 'reputationScreening' as ScoreCategory,
             title: 'Developer lacks track record',
             description: 'Project developer has limited track record with projects of this scale and complexity.',
             impact: 'medium',
@@ -139,5 +141,5 @@ export const mockProject = {
       uploadDate: '2023-01-07T09:15:00Z',
       status: 'processing'
     }
-  ]
+  ] as FileUpload[]
 };
