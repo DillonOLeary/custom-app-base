@@ -1,0 +1,49 @@
+name: Mutation Testing
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly at midnight on Sunday
+
+jobs:
+  mutation-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      
+      - name: Run utils mutation tests
+        run: yarn test:mutation:utils
+        continue-on-error: true
+      
+      - name: Run services mutation tests
+        run: yarn test:mutation:services
+        continue-on-error: true
+      
+      - name: Run common components mutation tests
+        run: yarn test:mutation:common
+        continue-on-error: true
+      
+      - name: Run dashboard components mutation tests
+        run: yarn test:mutation:dashboard
+        continue-on-error: true
+      
+      - name: Run detail components mutation tests
+        run: yarn test:mutation:detail
+        continue-on-error: true
+      
+      - name: Upload mutation test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-test-reports
+          path: reports/mutation/
+          if-no-files-found: warn
