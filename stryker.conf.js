@@ -19,7 +19,7 @@ module.exports = {
   concurrency: 4,
   ignoreStatic: true,
   ignorePatterns: ['node_modules/**/*', '.next/**/*'],
-  thresholds: { high: 80, low: 60, break: null },
+  thresholds: { high: 80, low: 60, break: 40 },
   mutate: [
     // Utility functions
     'src/utils/token-validation.ts',

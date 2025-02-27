@@ -127,6 +127,19 @@ jobs:
 
       - name: Run tests
         run: yarn test
+        
+      - name: Run utils mutation tests
+        id: utils_test
+        run: yarn test:mutation:utils
+        continue-on-error: true
+        
+      - name: Upload mutation test reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-test-reports
+          path: reports/mutation/
+          retention-days: 7
 
   e2e-tests:
     name: End-to-End Tests

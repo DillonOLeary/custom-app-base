@@ -22,24 +22,45 @@ jobs:
         run: yarn install --frozen-lockfile
       
       - name: Run utils mutation tests
+        id: utils_test
         run: yarn test:mutation:utils
         continue-on-error: true
       
       - name: Run services mutation tests
+        id: services_test
         run: yarn test:mutation:services
         continue-on-error: true
       
       - name: Run common components mutation tests
+        id: common_test
         run: yarn test:mutation:common
         continue-on-error: true
       
       - name: Run dashboard components mutation tests
+        id: dashboard_test
         run: yarn test:mutation:dashboard
         continue-on-error: true
       
       - name: Run detail components mutation tests
+        id: detail_test
         run: yarn test:mutation:detail
         continue-on-error: true
+        
+      - name: Check overall test outcomes
+        run: |
+          if [[ "${{ steps.utils_test.outcome }}" == "failure" && \
+                "${{ steps.services_test.outcome }}" == "failure" && \
+                "${{ steps.common_test.outcome }}" == "failure" && \
+                "${{ steps.dashboard_test.outcome }}" == "failure" && \
+                "${{ steps.detail_test.outcome }}" == "failure" ]]; then
+            echo "::error::All mutation tests failed to meet the threshold score of 40%"
+            exit 1
+          elif [[ "${{ steps.utils_test.outcome }}" == "failure" || \
+                  "${{ steps.services_test.outcome }}" == "failure" ]]; then
+            echo "::warning::Core utility or service tests failed to meet the threshold score. These are critical areas that require good test coverage."
+          else
+            echo "::notice::Mutation tests completed. Check the reports for detailed results."
+          fi
       
       - name: Upload mutation test reports
         uses: actions/upload-artifact@v4
