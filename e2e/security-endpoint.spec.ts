@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Tests the dedicated security-test endpoint which enforces token validation
+ *
+ * This is now the main security test and can be run safely without modifying
+ * the application's state for other tests.
  */
 test.describe('Security Test Endpoint Tests', () => {
   test('Security test page should require a token', async ({ page }) => {
