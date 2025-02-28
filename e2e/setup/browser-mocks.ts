@@ -62,6 +62,69 @@ const mockFiles = [
 export async function injectSdkMocksToPage(page: Page): Promise<void> {
   // Define the mock implementation to be injected
   const sdkMockScript = `
+    // Helper function to ensure project data is valid
+    function ensureProjectFields(project) {
+      if (!project) {
+        project = {
+          id: 'default-id',
+          name: 'Default Project',
+          status: 'pending'
+        };
+      }
+      
+      // Make sure all required fields have default values
+      return {
+        id: project.id || 'unknown-id',
+        name: project.name || 'Unnamed Project',
+        location: project.location || 'Unknown Location',
+        type: project.type || 'other',
+        capacity: project.capacity || 0,
+        status: project.status || 'pending',
+        score: project.score,
+        createdAt: project.createdAt || new Date().toISOString(),
+        updatedAt: project.updatedAt || new Date().toISOString(),
+        analysisResult: project.analysisResult ? {
+          totalScore: project.analysisResult.totalScore || 0,
+          lastUpdated: project.analysisResult.lastUpdated || new Date().toISOString(),
+          redFlagCount: project.analysisResult.redFlagCount || 0,
+          categoryScores: (project.analysisResult.categoryScores || []).map(cs => ({
+            category: cs.category || 'unknown',
+            score: cs.score || 0,
+            maxScore: cs.maxScore || 20,
+            redFlags: (cs.redFlags || []).map(rf => ({
+              id: rf.id || \`rf-\${Date.now()}-\${Math.random()}\`,
+              category: rf.category || cs.category || 'unknown',
+              title: rf.title || 'Unknown Issue',
+              description: rf.description || 'No description provided',
+              impact: rf.impact || 'medium',
+              pointsDeducted: rf.pointsDeducted || 1
+            }))
+          }))
+        } : undefined,
+        analysisError: project.analysisError
+      };
+    }
+    
+    // Helper function to ensure file data is valid
+    function ensureFileFields(file) {
+      if (!file) {
+        file = {
+          id: \`file-\${Date.now()}-\${Math.random()}\`,
+          fileName: 'unknown-file.txt'
+        };
+      }
+      
+      return {
+        id: file.id || \`file-\${Date.now()}-\${Math.random()}\`,
+        fileName: file.fileName || 'unknown-file.txt',
+        fileSize: file.fileSize || 0,
+        uploadDate: file.uploadDate || new Date().toISOString(),
+        status: file.status || 'pending',
+        path: file.path || '',
+        downloadUrl: file.downloadUrl || '#'
+      };
+    }
+    
     // Create a mock for the Copilot SDK
     window.mockCopilotSdk = {
       retrieveWorkspace: async () => {
@@ -74,24 +137,55 @@ export async function injectSdkMocksToPage(page: Page): Promise<void> {
       },
       getProjects: async () => {
         console.log('[Mock] Getting projects');
-        return ${JSON.stringify(mockData.projects)};
+        const projects = ${JSON.stringify(mockData.projects)}.map(p => ensureProjectFields(p));
+        return projects;
       },
       getProjectById: async (id) => {
         console.log('[Mock] Getting project by ID:', id);
         const project = ${JSON.stringify(mockData.projects)}.find(p => p.id === id);
-        return project || ${JSON.stringify(mockData.projects[0])};
+        return ensureProjectFields(project || ${JSON.stringify(mockData.projects[0])});
       },
       createProject: async (project) => {
         console.log('[Mock] Creating project:', project);
-        return {
+        return ensureProjectFields({
           id: 'new-project-id',
           ...project,
           status: 'pending'
-        };
+        });
       },
       getProjectFiles: async (projectId) => {
         console.log('[Mock] Getting files for project:', projectId);
-        return ${JSON.stringify(mockFiles)};
+        const defaultFiles = [
+          {
+            id: 'file1',
+            fileName: 'Financial_Projections_2023.xlsx',
+            fileSize: 1024000,
+            uploadDate: '2023-01-10T00:00:00Z',
+            status: 'completed',
+            path: 'Financial/',
+            downloadUrl: '#download',
+          },
+          {
+            id: 'file2',
+            fileName: 'Site_Assessment_Report.pdf',
+            fileSize: 2048000,
+            uploadDate: '2023-01-05T00:00:00Z',
+            status: 'completed',
+            path: 'Technical/',
+            downloadUrl: '#download',
+          },
+          {
+            id: 'file3',
+            fileName: 'Environmental_Impact_Study.pdf',
+            fileSize: 3072000,
+            uploadDate: '2023-01-03T00:00:00Z',
+            status: 'completed',
+            path: 'Environmental/',
+            downloadUrl: '#download',
+          }
+        ];
+        const files = defaultFiles.map(f => ensureFileFields(f));
+        return files;
       },
       runAnalysis: async (projectId) => {
         console.log('[Mock] Running analysis for project:', projectId);

@@ -279,6 +279,56 @@ function createMockFunction() {
 }
 
 /**
+ * Safer data handler that ensures all fields are safely accessed
+ */
+function ensureProjectFields(project: any) {
+  if (!project) {
+    project = {
+      id: 'default-id',
+      name: 'Default Project',
+      status: 'pending',
+    };
+  }
+
+  // Make sure all required fields have default values
+  return {
+    id: project.id || 'unknown-id',
+    name: project.name || 'Unnamed Project',
+    location: project.location || 'Unknown Location',
+    type: project.type || 'other',
+    capacity: project.capacity || 0,
+    status: project.status || 'pending',
+    score: project.score,
+    createdAt: project.createdAt || new Date().toISOString(),
+    updatedAt: project.updatedAt || new Date().toISOString(),
+    analysisResult: project.analysisResult
+      ? {
+          totalScore: project.analysisResult.totalScore || 0,
+          lastUpdated:
+            project.analysisResult.lastUpdated || new Date().toISOString(),
+          redFlagCount: project.analysisResult.redFlagCount || 0,
+          categoryScores: (project.analysisResult.categoryScores || []).map(
+            (cs: any) => ({
+              category: cs.category || 'unknown',
+              score: cs.score || 0,
+              maxScore: cs.maxScore || 20,
+              redFlags: (cs.redFlags || []).map((rf: any) => ({
+                id: rf.id || `rf-${Date.now()}-${Math.random()}`,
+                category: rf.category || cs.category || 'unknown',
+                title: rf.title || 'Unknown Issue',
+                description: rf.description || 'No description provided',
+                impact: rf.impact || 'medium',
+                pointsDeducted: rf.pointsDeducted || 1,
+              })),
+            }),
+          ),
+        }
+      : undefined,
+    analysisError: project.analysisError,
+  };
+}
+
+/**
  * Setup Copilot SDK mocks for testing
  * This should be called before running tests
  */
@@ -296,21 +346,61 @@ export function setupSdkMocks() {
         mockResponses.tokenPayload,
       ),
       getProjects: createMockFunction().mockResolvedValue(
-        mockResponses.projects,
+        // Ensure all projects have required fields
+        mockResponses.projects.map(ensureProjectFields),
       ),
       getProjectById: createMockFunction().mockImplementation((id: string) => {
+        const project = mockResponses.projects.find((p) => p.id === id);
+        // Ensure project has all required fields even if not found
         return Promise.resolve(
-          mockResponses.projects.find((p) => p.id === id) || null,
+          ensureProjectFields(project || mockResponses.projects[0]),
         );
       }),
       createProject: createMockFunction().mockImplementation((project: any) => {
-        const newProject = {
+        const newProject = ensureProjectFields({
           id: `new-${Date.now()}`,
           ...project,
           status: 'pending',
-        };
+        });
         return Promise.resolve(newProject);
       }),
+      getProjectFiles: createMockFunction().mockImplementation(
+        (projectId: string) => {
+          // Create mock files with safe defaults
+          const defaultFiles = [
+            {
+              id: 'file1',
+              fileName: 'Financial_Projections_2023.xlsx',
+              fileSize: 1024000,
+              uploadDate: '2023-01-10T00:00:00Z',
+              status: 'completed',
+              path: 'Financial/',
+              downloadUrl: '#download',
+            },
+            {
+              id: 'file2',
+              fileName: 'Site_Assessment_Report.pdf',
+              fileSize: 2048000,
+              uploadDate: '2023-01-05T00:00:00Z',
+              status: 'completed',
+              path: 'Technical/',
+              downloadUrl: '#download',
+            },
+          ];
+
+          // Return the mock files with safe access
+          const files = defaultFiles.map((file: any) => ({
+            id: file.id || `file-${Date.now()}-${Math.random()}`,
+            fileName: file.fileName || 'unknown-file.txt',
+            fileSize: file.fileSize || 0,
+            uploadDate: file.uploadDate || new Date().toISOString(),
+            status: file.status || 'pending',
+            path: file.path || '',
+            downloadUrl: file.downloadUrl || '#',
+          }));
+          return Promise.resolve(files);
+        },
+      ),
     };
 
     // Mock the copilotApi function

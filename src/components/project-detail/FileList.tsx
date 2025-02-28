@@ -11,7 +11,9 @@ interface FileListProps {
 
 export function FileList({ files, isLoading }: FileListProps) {
   // Helper function to get the file icon based on file name
-  const getFileIcon = (fileName: string) => {
+  const getFileIcon = (fileName: string = '') => {
+    if (!fileName) return '📁';
+
     const extension = fileName.split('.').pop()?.toLowerCase();
 
     switch (extension) {
@@ -101,9 +103,12 @@ export function FileList({ files, isLoading }: FileListProps) {
                     {file.fileName}
                   </h3>
                   <span
-                    className={`ceart-score-badge ${getStatusColor(file.status)}`}
+                    className={`ceart-score-badge ${getStatusColor(file.status || 'pending')}`}
                   >
-                    {file.status.charAt(0).toUpperCase() + file.status.slice(1)}
+                    {file.status
+                      ? file.status.charAt(0).toUpperCase() +
+                        file.status.slice(1)
+                      : 'Pending'}
                   </span>
                 </div>
 

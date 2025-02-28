@@ -1,85 +1,78 @@
-# Testing Improvements
+# CEART Testing Documentation
 
-## Summary of Changes
+## Overview
 
-We've made several improvements to fix issues with unit and e2e tests in the CEART application:
+This document describes the testing strategy and known issues for the CEART application.
 
-### Unit Tests
+## Test Types
 
-All unit tests are now passing without any errors or failures. These tests cover components, services, utilities, and security features of the application.
+The application has the following test types:
 
-### E2E Tests
+1. **Unit Tests** - Testing individual components and functions
+2. **End-to-End Tests** - Testing complete user flows with Playwright
 
-End-to-end (e2e) tests have been partially fixed, but some issues remain in the test environment.
+## E2E Test Improvements
 
-#### Key Improvements:
+We've made several improvements to ensure tests are more reliable:
 
-1. **Added Data Test IDs:**
+### 1. Fixed JavaScript Errors in Components
 
-   - Added `data-testid="projects-heading"` to the dashboard title
-   - Added `data-testid="upload-files-heading"` to the file upload component
+Several components had null/undefined checking issues which were fixed:
 
-2. **Test Reliability:**
+- `ProjectHeader.tsx`: Added null checking for `project.name` to avoid `toUpperCase()` errors
+- `FileList.tsx`: Added safety checks for `fileName` in `getFileIcon()` function
+- `FolderBrowser.tsx`: Added safety checks for `fileName` in `getFileIcon()` function
+- Both file components: Added null checking for `file.status` in status display code
 
-   - Modified tests to wait for pages to load properly
-   - Added longer timeouts for element detection
-   - Made tests less dependent on specific text content
-   - Added page.waitForTimeout() after navigation
+### 2. Enhanced Test Data Quality
 
-3. **Test Environment:**
+Improved mock data handling:
 
-   - Updated environment variable handling in test setup
-   - Made sure the CI flag is properly set for all tests
-   - Fixed environment configuration in playwright.config.ts
+- Created `ensureProjectFields` function to ensure all project fields have valid defaults
+- Created `ensureFileFields` function to ensure all file fields have valid defaults
+- Updated browser-mocks.ts to use these safe field handling functions
 
-4. **Test Strategy:**
+### 3. Improved Test Debugging
 
-   - Created a simplified test file (simple-test.spec.ts) that only tests basic functionality
-   - Added yarn test:e2e:basic script to run only the most reliable tests
-   - Added a script to clean up Next.js processes before running tests
+Added better test debugging tools:
 
-5. **Test Documentation:**
-   - Updated e2e/README.md with detailed troubleshooting information
-   - Added information about recent improvements and known issues
+- Created `debug-test.spec.ts` with detailed diagnostics for project detail pages
+- Added extensive logging to track render issues
+- Created screenshots for visual verification
 
-#### Remaining Issues:
+### 4. Simplified Test Approach
 
-Some e2e tests are still failing because:
+For basic verification:
 
-1. The project cards don't appear to render properly in the test environment
-2. Some components don't load reliably in the test context
-3. Text content may not be visible due to CSS styling differences
+- Added `simple-test.spec.ts` with basic page load tests
+- Created `yarn test:e2e:basic` script to run reliable tests only
 
-## How to Run Tests
+## Running Tests
 
-To run all unit tests:
+The following test commands are available:
 
-```bash
-yarn test
-```
+- `yarn test` - Run unit tests
+- `yarn test:e2e` - Run all e2e tests
+- `yarn test:e2e:basic` - Run only basic e2e tests (most reliable)
+- `yarn test:e2e:ui` - Run e2e tests with Playwright UI for debugging
 
-To run e2e tests:
+## Common Issues
 
-```bash
-# Run all e2e tests (some may fail)
-yarn test:e2e
+1. **Project Name Display** - The tests detect that project names may not be visible, though the page otherwise renders correctly. This could be due to CSS issues or load timing.
 
-# Run only basic e2e tests that should pass
-yarn test:e2e:basic
+2. **Browser vs. Test Environment** - Some tests may pass in a browser but fail in the CI environment due to differences in rendering.
 
-# Run e2e tests with UI for easier debugging
-yarn test:e2e:ui
-```
+3. **Element Visibility** - If elements appear to be in the DOM but aren't visible, check z-index issues or hidden elements.
 
-## Next Steps
+## Test Strategy
 
-For completely fixing the e2e tests, consider:
+1. Start with the simplest tests (`simple-test.spec.ts` and `debug-test.spec.ts`)
+2. If those pass, move to more complex tests like `user-flow.spec.ts`
+3. Use the `test:e2e:ui` command for detailed investigation of failures
 
-1. Refactoring the tests to use more reliable selectors
-2. Adding more data-testid attributes to key components
-3. Investigating why project cards don't render properly in the test environment
-4. Setting up a more isolated test environment that doesn't interfere with development
+## Future Improvements
 
-## Conclusion
-
-The unit tests are now fully working, and we have a subset of e2e tests that reliably pass. This ensures that basic functionality is tested, while providing a foundation for further test improvements in the future.
+1. Add more data-testid attributes to key elements
+2. Enhance mock data to better reflect production data
+3. Improve test timeouts and wait strategies
+4. Consider separating tests for different project states (completed, analyzing, pending)

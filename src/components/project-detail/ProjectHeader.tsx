@@ -39,14 +39,18 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div className="flex items-center">
-          <TypeIcon type={project.type} size="lg" className="mr-3" />
+          <TypeIcon type={project.type || 'other'} size="lg" className="mr-3" />
           <h1 className="heading-primary heading-1 text-[--color-text-dark]">
-            {project.name.toUpperCase()}
+            {(project.name || '').toUpperCase()}
           </h1>
         </div>
 
         <div className="flex items-center mt-3 md:mt-0">
-          <StatusBadge status={project.status} size="md" className="mr-3" />
+          <StatusBadge
+            status={project.status || 'pending'}
+            size="md"
+            className="mr-3"
+          />
 
           {project.score !== undefined && (
             <div className="flex items-center bg-[--color-bg-1] px-3 py-1 rounded-full">
@@ -67,21 +71,21 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         <div className="flex items-center">
           <span className="text-[--color-bg-3] text-3 mr-1">Location:</span>
           <span className="heading-secondary text-3 text-[--color-text-dark]">
-            {project.location}
+            {project.location || 'Unknown'}
           </span>
         </div>
 
         <div className="flex items-center">
           <span className="text-[--color-bg-3] text-3 mr-1">Capacity:</span>
           <span className="heading-secondary text-3 text-[--color-text-dark]">
-            {project.capacity} MW
+            {project.capacity || 0} MW
           </span>
         </div>
 
         <div className="flex items-center">
           <span className="text-[--color-bg-3] text-3 mr-1">Created:</span>
           <span className="heading-secondary text-3 text-[--color-text-dark]">
-            {formatDate(project.createdAt)}
+            {formatDate(project.createdAt || new Date().toISOString())}
           </span>
         </div>
       </div>
