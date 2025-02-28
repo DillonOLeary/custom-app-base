@@ -12,28 +12,37 @@ import { setupSdkMocks } from './setup/sdk-mock';
  * Sets up mocks and ensures consistent test state
  */
 export function initTestEnvironment(): void {
-  // Set up the Copilot SDK mocks
-  setupSdkMocks();
+  try {
+    // Set up the Copilot SDK mocks
+    setupSdkMocks();
 
-  // Ensure we have proper environment variables set for tests
-  process.env.COPILOT_ENV = 'local';
+    // Ensure we have proper environment variables set for tests
+    process.env.COPILOT_ENV = 'local';
 
-  // Set test mode flag for components that read from NEXT_PUBLIC_ variables
-  process.env.NEXT_PUBLIC_TEST_MODE = 'true';
+    // Set test mode flag for components that read from NEXT_PUBLIC_ variables
+    process.env.NEXT_PUBLIC_TEST_MODE = 'true';
 
-  // We can't directly set NODE_ENV as it's read-only in TypeScript
-  // But we can use this approach to test for it in our components
-  if (process.env.NODE_ENV !== 'test') {
-    console.log('Setting test environment mode');
-    // @ts-ignore - Need to override for testing purposes
-    process.env.NODE_ENV = 'test';
+    // Set CI flag to ensure consistent behavior
+    process.env.CI = 'true';
+
+    // We can't directly set NODE_ENV as it's read-only in TypeScript
+    // But we can use this approach to test for it in our components
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('Setting test environment mode');
+      // @ts-ignore - Need to override for testing purposes
+      process.env.NODE_ENV = 'test';
+    }
+
+    console.log('Test environment initialized with:', {
+      NODE_ENV: process.env.NODE_ENV,
+      COPILOT_ENV: process.env.COPILOT_ENV,
+      NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
+      CI: process.env.CI,
+    });
+  } catch (error) {
+    console.error('Error initializing test environment:', error);
+    throw error;
   }
-
-  console.log('Test environment initialized with:', {
-    NODE_ENV: process.env.NODE_ENV,
-    COPILOT_ENV: process.env.COPILOT_ENV,
-    NEXT_PUBLIC_TEST_MODE: process.env.NEXT_PUBLIC_TEST_MODE,
-  });
 }
 
 // Initialize the test environment when this module is loaded

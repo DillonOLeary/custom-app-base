@@ -86,7 +86,10 @@ export function FileUpload({
 
   return (
     <div className="mb-8">
-      <h2 className="heading-primary heading-2 text-[--color-text-dark] mb-3">
+      <h2
+        className="heading-primary heading-2 text-[--color-text-dark] mb-3"
+        data-testid="upload-files-heading"
+      >
         UPLOAD PROJECT FILES
       </h2>
 

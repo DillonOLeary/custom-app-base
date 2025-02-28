@@ -145,7 +145,10 @@ export function ProjectsDashboard() {
         <div className="h-full flex flex-col md:flex-row md:justify-between md:items-center px-5 md:px-9 pt-6">
           <div className="flex items-center">
             <div className="w-1 h-6 bg-[--color-primary] rounded mr-2"></div>
-            <h2 className="heading-primary heading-2 text-[--color-text-dark]">
+            <h2
+              className="heading-primary heading-2 text-[--color-text-dark]"
+              data-testid="projects-heading"
+            >
               YOUR PROJECTS
             </h2>
           </div>

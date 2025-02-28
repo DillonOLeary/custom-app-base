@@ -29,7 +29,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'COPILOT_ENV=local NEXT_PUBLIC_TEST_MODE=true yarn dev',
+    command:
+      'yarn build && NODE_ENV=test COPILOT_ENV=local NEXT_PUBLIC_TEST_MODE=true CI=true yarn start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
@@ -40,7 +41,7 @@ export default defineConfig({
       NODE_ENV: 'test',
       CI: 'true', // Force CI mode even in local development
     },
-    // Wait longer for the server in CI environments
-    timeout: process.env.CI ? 180000 : 60000,
+    // Wait longer for the server in CI environments and increase from defaults
+    timeout: process.env.CI ? 180000 : 120000,
   },
 });
