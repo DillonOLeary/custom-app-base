@@ -48,6 +48,15 @@ export function shouldSkipSDKValidation(): boolean {
   // Safely access environment variables that might be undefined
   // Try/catch for safer client/server code that works in all contexts
   try {
+    // HIGHEST PRIORITY: Check for security test mode in browser context
+    if (
+      typeof window !== 'undefined' &&
+      (window as any).SECURITY_TEST_MODE === true
+    ) {
+      console.log('Security test mode detected - NOT skipping SDK validation');
+      return false;
+    }
+
     // CRITICAL SECURITY CHECK: If we explicitly set ENFORCE_SDK_VALIDATION=true,
     // then we always return false here, enforcing validation regardless of other settings
     if (process.env.ENFORCE_SDK_VALIDATION === 'true') {
@@ -79,18 +88,6 @@ export function shouldSkipSDKValidation(): boolean {
 
     // Check for browser-side test flags (for e2e tests)
     if (typeof window !== 'undefined') {
-      // Special case for security tests - check if we're in security test mode
-      if ((window as any).SECURITY_TEST_MODE === true) {
-        console.log(
-          'Security test mode detected - NOT skipping SDK validation',
-        );
-        // Check if the page has provided a shouldSkipSDKValidation override
-        if (typeof (window as any).__shouldSkipSDKValidation === 'function') {
-          return (window as any).__shouldSkipSDKValidation();
-        }
-        return false;
-      }
-
       // Normal test mode detection
       if (
         (window as any).__TEST_MODE__ === true ||

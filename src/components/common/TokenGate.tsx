@@ -8,10 +8,25 @@ export function TokenGate({
   children: React.ReactNode;
   searchParams: SearchParams;
 }) {
-  // Token is required in all environments unless in development, test mode, or CI
-  const isTestOrCI = isTestOrCIEnvironment();
+  // Check for security test mode, which should enforce token validation
+  const isSecurityTest =
+    typeof window !== 'undefined' &&
+    (window as any).SECURITY_TEST_MODE === true;
 
-  if (!searchParams.token && !isTestOrCI) {
+  // Only skip validation if we're in test/CI AND not in security test mode
+  const shouldSkipValidation = isTestOrCIEnvironment() && !isSecurityTest;
+
+  // Log the validation decision for debugging
+  if (typeof window !== 'undefined') {
+    console.log('[TokenGate] Token validation check:', {
+      hasToken: !!searchParams.token,
+      isSecurityTest,
+      shouldSkipValidation,
+    });
+  }
+
+  if (!searchParams.token && !shouldSkipValidation) {
+    // In security test mode or production, throw error if token is missing
     throw new Error(
       'Session Token is required, guide available at: https://docs.copilot.com/docs/custom-apps-setting-up-the-sdk#session-tokens',
     );
