@@ -30,6 +30,22 @@
   --color-bg-5: #1e272e;
 }
 
+/* Skeleton loading animation */
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: var(--color-bg-1);
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 .heading-primary {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
