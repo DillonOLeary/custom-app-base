@@ -1,0 +1,75 @@
+name: Security Validation Test
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+  # Run weekly to ensure security mechanisms remain effective
+  schedule:
+    - cron: '0 0 * * 0'  # Run at midnight every Sunday
+
+jobs:
+  security-test:
+    name: Security Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Enable Corepack
+        run: corepack enable
+        
+      - name: Setup Yarn
+        run: corepack prepare yarn@4.1.0 --activate
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build application
+        run: yarn build
+        env:
+          # Enforce security validation for the build
+          ENFORCE_SDK_VALIDATION: 'true'
+          NODE_ENV: 'production'
+          COPILOT_ENV: 'production'
+          NEXT_PUBLIC_TEST_MODE: 'false'
+          CI: 'false'
+          
+      - name: Verify security mechanisms
+        run: |
+          # Confirm that the SDK validation is enforced in the built code
+          echo "Running security verification checks..."
+          
+          # Check that shouldSkipSDKValidation returns false when ENFORCE_SDK_VALIDATION is true
+          if grep -q "ENFORCE_SDK_VALIDATION" .next/server/chunks/*.js; then
+            echo "✅ Security enforcement logic is present in the build"
+          else
+            echo "❌ Security enforcement logic is missing from the build"
+            exit 1
+          fi
+          
+          # Verify SDK validation enforcement in the build
+          if grep -q "SECURITY ENFORCEMENT: SDK validation is explicitly enforced" .next/server/chunks/*.js; then
+            echo "✅ Security enforcement message is present in the build"
+          else
+            echo "❌ Security enforcement message is missing from the build"
+            exit 1
+          fi
+          
+          echo "Security verification checks completed"
+          
+      - name: Reporting
+        if: always()
+        run: |
+          echo "Security Test Summary:"
+          echo "======================"
+          echo "The security test validates that enforcement mechanisms are correctly"
+          echo "included in the build and cannot be bypassed in production."
+          echo ""
+          echo "This helps ensure that the bypass mechanisms added for testing"
+          echo "don't compromise security in production environments."

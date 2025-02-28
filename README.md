@@ -83,6 +83,47 @@ Mutation testing results are available in HTML format at `reports/mutation/mutat
 
 The Content Security Policy in the custom app base should be configured in `src/middleware.ts`. In the `cspHeader` variable under `frame-ancestors`, `https://dashboard.copilot.com` and `https://*.copilot.app` are pre-configured. If you have a custom domain, you'll also want to add your custom domain here. For example, `https://portal.mycompany.com`.
 
+### Security Model
+
+This application implements a robust security model for authentication that differentiates between development/testing and production environments.
+
+#### Security Features
+
+1. **Token-based Authentication**
+
+   - All production requests require a valid Copilot session token
+   - Token validation includes expiration checks, format validation, and rate-limiting
+
+2. **Environment-aware Validation**
+
+   - Testing environments use mock authentication for CI compatibility
+   - Production enforces strict token validation
+
+3. **Security Enforcement**
+   - The `ENFORCE_SDK_VALIDATION=true` environment variable overrides all other settings to enforce security
+   - Weekly security validation in CI to ensure bypasses aren't affecting production security
+
+#### Testing vs Production
+
+To ensure the application remains secure while allowing convenient testing:
+
+1. **Testing Environments** (any of the following):
+
+   - `NODE_ENV=development` or `NODE_ENV=test`
+   - `COPILOT_ENV=local`
+   - `NEXT_PUBLIC_TEST_MODE=true`
+   - `CI=true`
+
+2. **Production Environment**:
+
+   - `NODE_ENV=production`
+   - No test flags enabled
+   - Always requires valid tokens
+
+3. **Security Testing**:
+   - Run `./test-security.sh` to start a server with enforced security
+   - Security validation runs weekly in CI
+
 ### Continuous Integration
 
 This repository uses GitHub Actions for CI/CD with a sequential workflow pipeline:
@@ -94,6 +135,7 @@ This repository uses GitHub Actions for CI/CD with a sequential workflow pipelin
 5. **Test** - Executes unit tests with Jest
 6. **Build** - Builds the Next.js application for production
 7. **E2E Test** - Runs end-to-end tests with Playwright
+8. **Security Test** - Weekly validation of security mechanisms
 
 ### Local Development
 

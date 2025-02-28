@@ -19,7 +19,26 @@ export function isTestOrCIEnvironment(): boolean {
  * Determines if the application is running in a production environment
  */
 export function isProductionEnvironment(): boolean {
+  // If security enforcement is active, always report as production
+  if (process.env.ENFORCE_SDK_VALIDATION === 'true') {
+    return true;
+  }
+
   return process.env.NODE_ENV === 'production' && !isTestOrCIEnvironment();
+}
+
+/**
+ * Determines if the application is running with enforced security
+ * This is a critical security check that should never be bypassed
+ */
+export function isSecurityEnforced(): boolean {
+  return (
+    process.env.ENFORCE_SDK_VALIDATION === 'true' ||
+    (process.env.NODE_ENV === 'production' &&
+      process.env.COPILOT_ENV !== 'local' &&
+      process.env.CI !== 'true' &&
+      process.env.NEXT_PUBLIC_TEST_MODE !== 'true')
+  );
 }
 
 /**
@@ -29,6 +48,15 @@ export function shouldSkipSDKValidation(): boolean {
   // Safely access environment variables that might be undefined
   // Try/catch for safer client/server code that works in all contexts
   try {
+    // CRITICAL SECURITY CHECK: If we explicitly set ENFORCE_SDK_VALIDATION=true,
+    // then we always return false here, enforcing validation regardless of other settings
+    if (process.env.ENFORCE_SDK_VALIDATION === 'true') {
+      console.log(
+        'SECURITY ENFORCEMENT: SDK validation is explicitly enforced',
+      );
+      return false;
+    }
+
     // Log environment for debugging
     console.log('Environment check:', {
       NODE_ENV: process.env.NODE_ENV,
