@@ -18,6 +18,9 @@ test.describe('Application Security Tests', () => {
     await page.addInitScript(`
       window.SECURITY_TEST_MODE = true;
       
+      // Make sure test mode is disabled
+      window.__TEST_MODE__ = false;
+      
       // Override environment variables in the browser
       if (!window.process) {
         window.process = {};
@@ -25,6 +28,13 @@ test.describe('Application Security Tests', () => {
       if (!window.process.env) {
         window.process.env = {};
       }
+      
+      // Set environment variables to force security checks
+      window.process.env.NODE_ENV = 'production';
+      window.process.env.ENFORCE_SDK_VALIDATION = 'true';
+      window.process.env.NEXT_PUBLIC_TEST_MODE = 'false';
+      window.process.env.CI = 'false';
+      window.process.env.COPILOT_ENV = '';
       
       // Override the shouldSkipSDKValidation function that our SDK wrapper uses
       window.__shouldSkipSDKValidation = function() {
@@ -55,7 +65,14 @@ test.describe('Application Security Tests', () => {
         return originalCopilotApi ? originalCopilotApi(config) : null;
       };
       
-      console.log('[Security Test] Security test mode enabled');
+      console.log('[Security Test] Security test mode enabled with environment:', {
+        NODE_ENV: window.process.env.NODE_ENV,
+        ENFORCE_SDK_VALIDATION: window.process.env.ENFORCE_SDK_VALIDATION,
+        NEXT_PUBLIC_TEST_MODE: window.process.env.NEXT_PUBLIC_TEST_MODE,
+        CI: window.process.env.CI,
+        SECURITY_TEST_MODE: window.SECURITY_TEST_MODE,
+        TEST_MODE: window.__TEST_MODE__
+      });
     `);
   });
 

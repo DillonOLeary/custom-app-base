@@ -12,9 +12,10 @@ test.describe('Application Security Tests (Debug Version)', () => {
   test.beforeEach(async ({ page }) => {
     // Create a special global "SECURITY_TEST_MODE" that our custom mock will check for
     await page.addInitScript(`
-      window.SECURITY_TEST_MODE = true;
+      // Explicitly set TEST_MODE to false first
+      window.__TEST_MODE__ = false;
       
-      // This is the most important flag that should override all other settings
+      // Set the SECURITY_TEST_MODE flag which our TokenGate now respects directly
       window.SECURITY_TEST_MODE = true;
       
       // Override environment variables in the browser
@@ -32,8 +33,8 @@ test.describe('Application Security Tests (Debug Version)', () => {
       window.process.env.CI = 'false';
       window.process.env.COPILOT_ENV = '';
       
-      // Override key functions directly to force validation
-      // This is the most direct approach to ensure validation happens
+      // We no longer need to override these functions since our updated TokenGate
+      // handles the SECURITY_TEST_MODE flag directly, but we'll keep them for backward compatibility
       window.isTestOrCIEnvironment = function() {
         console.log('[Security Debug] isTestOrCIEnvironment called, returning false');
         return false;

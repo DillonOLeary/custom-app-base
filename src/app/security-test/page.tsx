@@ -46,9 +46,9 @@ export default function SecurityTestPage({
     });
   }, []);
 
-  // If we have a token, render protected content, otherwise TokenGate will throw
+  // Pass forceValidation=true to explicitly require a token regardless of environment
   return (
-    <TokenGate searchParams={searchParams}>
+    <TokenGate searchParams={searchParams} forceValidation={true}>
       <div className="p-6 max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">Security Test Page</h1>
         <div className="bg-green-100 p-4 rounded-lg border border-green-500 mb-4">
